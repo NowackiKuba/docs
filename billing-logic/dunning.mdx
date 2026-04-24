@@ -1,0 +1,39 @@
+---
+title: "Dunning & Retries"
+description: "Automated payment failure recovery logic."
+icon: "rotate-right"
+---
+
+# Dunning & Retries
+
+**Dunning** is the process of methodically communicating with customers to ensure the collection of accounts receivable when a payment fails.
+
+When a recurring subscription invoice fails to charge (e.g., due to an expired card or insufficient funds), Billy automatically coordinates with Stripe to execute a dunning recovery flow.
+
+## The Dunning Lifecycle
+
+1. **Initial Failure:** A charge attempt fails. Billy generates a `payment_failed` alert. The subscription status changes to `past_due`.
+2. **Smart Retries:** Based on your project's `dunningRetryDays` settings (e.g., retry 3, 5, and 7 days after the failure), Billy attempts to charge the card again.
+3. **Resolution:** 
+    - If a retry succeeds, the invoice is marked `paid`, a `paid` alert is generated, and the subscription reverts to `active`.
+    - If all retries are exhausted and the payment still fails, the invoice transitions to `uncollectible`. The subscription is either canceled or marked `unpaid`, depending on your Stripe settings.
+
+## Integrating with Dunning
+
+You should listen to Billy alerts (or webhooks) to restrict access within your application while a subscription is `past_due`.
+
+<CodeGroup>
+```typescript Restricting Access
+const subscription = await billy.subscriptions.getByCustomer(userId);
+
+if (subscription.status === 'past_due') {
+  // Redirect user to the Billy Customer Portal to update their payment method
+  const session = await billy.portal.createSession({ customerId: userId });
+  redirect(session.data.url);
+}
+```
+</CodeGroup>
+
+<Tip>
+It is highly recommended to proactively notify customers of upcoming expirations *before* dunning begins. Listen for the `invoice_upcoming` alert to prompt customers to update their cards early.
+</Tip>

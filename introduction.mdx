@@ -1,0 +1,71 @@
+---
+title: 'Introduction'
+description: 'Billy is a billing infrastructure platform that abstracts Stripe complexity into a clean REST API and SDK.'
+---
+
+# Welcome to Billy
+
+Billy turns complex Stripe billing flows into simple, single-call operations. The platform handles subscriptions, usage-based token metering, proration, invoicing, and customer portals — so you can focus on your product.
+
+<CardGroup cols={2}>
+  <Card title="REST API" icon="webhook" color="#4F46E5">
+    A fully documented REST API secured by API key authentication. Manage every billing resource programmatically.
+  </Card>
+  <Card title="SDK" icon="code" color="#4F46E5">
+    Install `@billy/sdk` and interact with the API using typed TypeScript methods instead of raw HTTP calls.
+  </Card>
+  <Card title="Token metering" icon="coins" color="#4F46E5">
+    Add, deduct, freeze, and unfreeze usage tokens per customer. Ledger entries track every mutation for auditability.
+  </Card>
+  <Card title="Soft deletes" icon="trash-can-undo" color="#4F46E5">
+    Billy never hard-deletes paid invoices or active subscriptions, protecting your MRR metrics and audit trail.
+  </Card>
+</CardGroup>
+
+## How it works
+
+Billy sits between your application and Stripe. You call the Billy API with your project's API key; Billy handles Stripe communication, proration calculation, webhook processing, and data persistence.
+
+<Steps>
+  <Step title="Create a project">
+    Connect your Stripe account by creating a project with your Stripe secret key. Billy syncs your products and prices automatically.
+  </Step>
+  <Step title="Create customers">
+    Register your users as Billy customers. Each customer gets a corresponding Stripe customer record and an isolated token balance.
+  </Step>
+  <Step title="Manage subscriptions">
+    Create enterprise subscriptions, upgrade or downgrade plans with correct proration, and manage seat allocations — all through a single endpoint.
+  </Step>
+  <Step title="Monitor with alerts">
+    Billy surfaces billing events (payment failures, trial endings, disputes) as structured alert records. Poll or filter them to drive your in-app notifications.
+  </Step>
+</Steps>
+
+## Authentication
+
+Every API request requires an `API Key` header. You generate API keys from the Billy dashboard.
+
+```http
+Authorization: API Key <your_api_key>
+```
+
+<Warning>
+  Never expose your API key in client-side code. All requests to the Billy API must originate from your server.
+</Warning>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Get from zero to a working integration in under three minutes.
+  </Card>
+  <Card title="Subscriptions guide" icon="repeat" href="/guides/subscriptions">
+    Learn how upgrades, downgrades, and proration work in Billy.
+  </Card>
+  <Card title="API Reference" icon="book-open" href="/api-reference">
+    Browse the full endpoint reference, generated from the OpenAPI spec.
+  </Card>
+  <Card title="Webhooks" icon="bell" href="/guides/webhooks">
+    Handle Stripe events securely without writing your own verification logic.
+  </Card>
+</CardGroup>

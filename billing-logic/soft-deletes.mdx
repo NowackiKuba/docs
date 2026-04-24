@@ -1,0 +1,33 @@
+---
+title: "Soft Deletion Architecture"
+description: "Why Billy never deletes your data, protecting MRR metrics and financial audits."
+icon: "trash-can-undo"
+---
+
+# Soft Deletion Architecture
+
+A core architectural principle of the Billy platform is the strict enforcement of **Soft Deletes** for all critical financial entities.
+
+## What is a Soft Delete?
+
+When you call a `DELETE` endpoint (e.g., `DELETE /api/subscriptions/{id}`), Billy does **not** issue a `DELETE` query to the database. Instead, it updates the record and sets a `deletedAt` timestamp. 
+
+Soft-deleted records are automatically excluded from standard list queries, but they remain permanently stored in your database.
+
+## Why Billy enforces this
+
+In billing and SaaS infrastructure, hard-deleting records is incredibly dangerous.
+
+1. **MRR Reporting:** If you hard-delete a canceled subscription, your historical Monthly Recurring Revenue (MRR) metrics for past months will instantly drop, as the system can no longer calculate revenue from that deleted record.
+2. **Audit Trails:** If you hard-delete a customer, you lose the ability to trace the origin of past invoices, tokens, and payments.
+3. **Ledger Integrity:** Token ledgers require the preservation of all historical grants and deductions to calculate balances accurately.
+
+## How it affects you
+
+- **Customers:** Deleting a customer soft-deletes the profile. All of their active subscriptions are instantly canceled. Their historical invoices remain intact.
+- **Subscriptions:** Canceling a subscription soft-deletes the entity. It transitions to the `canceled` state and sets `deletedAt`. 
+- **Invoices:** Paid and Voided invoices are completely immutable and can only be soft-deleted. The *only* exception to the soft-delete rule is an invoice in the `draft` state, which has no financial impact and can be hard-deleted.
+
+<Note>
+If you require complete data erasure for GDPR compliance (Right to be Forgotten), please contact support to initiate a compliant hard-delete purge across Billy and Stripe.
+</Note>

@@ -1,0 +1,29 @@
+---
+title: "Data Privacy & GDPR"
+description: "How Billy handles PII and complies with global privacy regulations."
+icon: "shield-halved"
+---
+
+# Data Privacy & GDPR
+
+Billy is designed with "privacy by default" principles to help your application remain compliant with global privacy frameworks like GDPR (Europe) and CCPA (California).
+
+## Personally Identifiable Information (PII)
+
+Billy requires minimal PII to function. The only required PII is a customer's **email address** and **name**. 
+Billing addresses are optional but recommended for accurate tax calculations.
+
+<Note>
+**Data Residency:** All core Billy platform data is encrypted at rest and in transit.
+</Note>
+
+## Right to be Forgotten (GDPR)
+
+Because Billy employs a strict **soft-delete** architecture to protect MRR metrics, calling `DELETE /api/customers/{id}` does not physically wipe the user's data from the database.
+
+If a user explicitly requests a GDPR "Right to be Forgotten" erasure:
+1. You must scrub their PII from your internal databases.
+2. You must update their Billy profile via `PATCH /api/customers/{id}` to overwrite their email and name with anonymized data (e.g., `deleted_user_123@anonymized.local`).
+3. You must initiate a deletion request on the Stripe side to purge the underlying `cus_` record.
+
+By anonymizing the Billy record, you comply with GDPR while preserving the anonymous ledger entries required for historical financial audits.

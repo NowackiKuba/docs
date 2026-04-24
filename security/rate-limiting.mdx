@@ -1,0 +1,36 @@
+---
+title: "Rate Limiting"
+description: "API rate limits and how to handle 429 responses."
+icon: "gauge-high"
+---
+
+# Rate Limiting
+
+To ensure high availability and prevent abuse, the Billy API enforces rate limits on all endpoints based on your Project API Key.
+
+## Standard Limits
+
+The default rate limit is **100 requests per second** per project.
+
+If you exceed this limit, Billy will return a `429 Too Many Requests` HTTP status code.
+
+## Response Headers
+
+Every API response includes headers detailing your current rate limit status:
+
+- `X-RateLimit-Limit`: Your maximum allowed requests per second.
+- `X-RateLimit-Remaining`: The number of requests remaining in the current window.
+- `X-RateLimit-Reset`: The UNIX timestamp when the limit window resets.
+
+## Handling 429s in the SDK
+
+If you are using the `@billy/sdk`, rate limiting is handled automatically. The SDK detects `429` responses and applies an exponential backoff strategy, automatically retrying the request up to 3 times before throwing a `BillyError`.
+
+```typescript
+import { Billy } from '@billy/sdk';
+
+// The SDK handles backoff automatically
+const billy = new Billy(process.env.BILLY_API_KEY, {
+  maxRetries: 3
+});
+```

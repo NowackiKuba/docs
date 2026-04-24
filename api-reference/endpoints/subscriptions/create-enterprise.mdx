@@ -1,0 +1,14 @@
+---
+openapi: "POST /api/subscriptions/enterprise"
+---
+
+Programmatically provision an enterprise subscription bypassing the standard self-service checkout flow.
+
+<Warning>
+  **Payment Methods:** This endpoint requires the customer to either have a default payment method on file or have `isEnterprise` set to true to allow invoice-based payments (net terms).
+</Warning>
+
+<Note>
+  Use the `tokenAllocation` field to automatically deposit usage tokens upon creation.
+</Note>
+

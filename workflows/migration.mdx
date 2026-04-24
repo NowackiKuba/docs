@@ -1,0 +1,30 @@
+---
+title: "Migrating from Stripe"
+description: "How to safely import existing Stripe customers into Billy."
+icon: "truck-fast"
+---
+
+# Migrating from Stripe
+
+If you are already processing payments directly through Stripe and want to adopt Billy, you can migrate your existing subscriptions seamlessly without any customer downtime or re-authentication of credit cards.
+
+## Migration Strategy
+
+Because Billy acts as an abstraction layer over your *existing* Stripe account, migrating is a matter of syncing identifiers, not moving credit card data.
+
+1. **Sync Products & Prices:** Billy automatically pulls all active Products and Prices from your connected Stripe account upon project creation.
+2. **Import Customers:** For every existing customer in your database, call the Billy Customer creation endpoint, explicitly passing their existing Stripe ID:
+   ```typescript
+   await billy.customers.create({
+     email: dbUser.email,
+     name: dbUser.name,
+     externalUserId: dbUser.id,
+     stripeCustomerId: 'cus_existing123' // Crucial step!
+   });
+   ```
+   By passing the `stripeCustomerId`, Billy links the new internal record directly to the existing Stripe vault.
+3. **Webhooks Catch-up:** Once the customer is linked, any future renewals or invoice creations for their existing active subscriptions will be automatically caught by Billy's webhooks and synced into the Billy database.
+
+<Warning>
+Do not attempt to recreate subscriptions for existing users. Simply mapping the Customer ID is enough; Billy's webhooks will populate the subscription data upon the next billing event.
+</Warning>

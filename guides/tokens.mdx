@@ -1,0 +1,135 @@
+---
+title: 'Token metering'
+description: 'Use Billy token ledgers to implement usage-based billing with add, deduct, freeze, and unfreeze operations.'
+icon: 'coins'
+---
+
+# Token metering
+
+Billy's token system lets you track usage credits per customer. Each operation (add, deduct, freeze, unfreeze) creates a ledger entry so you have a full audit trail.
+
+## How tokens work
+
+Every customer has a token balance. Your application deducts tokens when the customer performs a billable action — processing an AI request, rendering a report, sending an email, and so on.
+
+```
+Total balance = added − deducted − frozen
+Available balance = total balance − frozen
+```
+
+<Note>
+  Frozen tokens are reserved but not yet consumed. Use freeze/unfreeze for operations that succeed or fail atomically — for example, reserving tokens for an API call, then deducting on success or unfreezing on failure.
+</Note>
+
+## Adding tokens
+
+Grant tokens when a customer subscribes, upgrades, or purchases a top-up.
+
+```bash
+curl -X POST https://api.usebilly.dev/api/tokens/add \
+  -H "Authorization: API Key <your_api_key>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "customerId": "cus_abc123",
+    "amount": 10000,
+    "description": "Monthly grant — Pro plan"
+  }'
+```
+
+## Deducting tokens
+
+Deduct tokens when a billable action completes.
+
+```bash
+curl -X POST https://api.usebilly.dev/api/tokens/deduct \
+  -H "Authorization: API Key <your_api_key>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "customerId": "cus_abc123",
+    "amount": 250,
+    "description": "GPT-4o request — 1,250 output tokens"
+  }'
+```
+
+<Warning>
+  Deducting more tokens than the available balance is allowed by default. If you want to enforce hard limits, check the balance before deducting.
+</Warning>
+
+## Freeze and unfreeze pattern
+
+Use freeze/unfreeze when the final token cost is only known after the operation completes.
+
+```typescript
+// 1. Reserve tokens before the operation
+await billy.tokens.freeze({
+  customerId: 'cus_abc123',
+  amount: 500,
+  description: 'Reservation for image generation',
+});
+
+try {
+  const result = await generateImage(prompt);
+  const actualCost = calculateCost(result);
+
+  // 2a. Unfreeze the reservation
+  await billy.tokens.unfreeze({
+    customerId: 'cus_abc123',
+    amount: 500,
+  });
+
+  // 2b. Deduct the actual cost
+  await billy.tokens.deduct({
+    customerId: 'cus_abc123',
+    amount: actualCost,
+    description: `Image generation — ${result.resolution}`,
+  });
+} catch (error) {
+  // 3. Release the reservation on failure
+  await billy.tokens.unfreeze({
+    customerId: 'cus_abc123',
+    amount: 500,
+  });
+  throw error;
+}
+```
+
+## Checking the balance
+
+```bash
+curl https://api.usebilly.dev/api/tokens/balance/{customerId} \
+  -H "Authorization: API Key <your_api_key>"
+```
+
+The response contains `total`, `available`, and `frozen` amounts.
+
+## Viewing the ledger
+
+The ledger provides a chronological list of all token mutations for a customer.
+
+```bash
+curl https://api.usebilly.dev/api/tokens/ledgers/{customerId} \
+  -H "Authorization: API Key <your_api_key>"
+```
+
+Use the ledger to build a usage history view in your customer-facing dashboard.
+
+## Token expiry
+
+Configure token expiry in project settings. Three modes are available:
+
+| Mode | Behavior |
+|------|----------|
+| `period` | Tokens expire at the end of each billing period. |
+| `rolling` | Each token batch expires a fixed number of days after it was granted. |
+| `never` | Tokens never expire. |
+
+When tokens expire, a `tokens_expired` alert is created for the customer.
+
+## Project-level usage analytics
+
+Retrieve aggregated token usage across all customers for your project.
+
+```bash
+curl "https://api.usebilly.dev/api/tokens/usage/{projectId}?timeFrame=30d" \
+  -H "Authorization: API Key <your_api_key>"
+```

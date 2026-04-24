@@ -1,33 +1,43 @@
 ---
-title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+title: 'API Reference'
+description: 'Complete REST API reference for the Billy billing platform.'
 ---
 
+# Billy API Reference
+
+The Billy API exposes endpoints across seven domains. All requests require an API key and return JSON.
+
 <Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
+  This reference is generated from the Billy OpenAPI specification. Use the endpoint pages in the sidebar to explore request parameters, response schemas, and example payloads.
 </Note>
-
-## Welcome
-
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
-
-<Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
->
-  View the OpenAPI specification file
-</Card>
 
 ## Authentication
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
-
-```json
-"security": [
-  {
-    "bearerAuth": []
-  }
-]
+```http
+Authorization: API Key <your_api_key>
 ```
+
+API keys are scoped to a specific project. Requests made with a key belonging to Project A cannot read or write data belonging to Project B.
+
+## HTTP methods
+
+| Method | Usage |
+|--------|-------|
+| `GET` | Retrieve a resource or list of resources. |
+| `POST` | Create a new resource. |
+| `PATCH` | Partially update an existing resource. |
+| `DELETE` | Delete a resource (soft-delete unless otherwise noted). |
+
+## Common error codes
+
+| Code | HTTP status | Description |
+|------|-------------|-------------|
+| `UNAUTHORIZED` | 401 | Missing or invalid API key. |
+| `FORBIDDEN` | 403 | API key lacks permission for this operation. |
+| `NOT_FOUND` | 404 | Requested resource does not exist. |
+| `CONFLICT` | 409 | Unique constraint violation (e.g., duplicate Stripe ID). |
+| `VALIDATION_ERROR` | 400 | Request body or query parameters failed validation. |
+
+<Card title="View OpenAPI specification" icon="code" href="https://github.com/NowackiKuba/billy">
+  Download or view the raw `openapi.json` source file.
+</Card>

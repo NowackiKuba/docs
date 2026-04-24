@@ -1,0 +1,33 @@
+---
+title: "B2B SaaS Multi-tenancy"
+description: "How to model B2B organizations in Billy."
+icon: "building"
+---
+
+# B2B SaaS Multi-tenancy
+
+If you are building a B2B application where companies (organizations) purchase subscriptions, rather than individual users, you need to map your data model to Billy correctly.
+
+## The 1:1 Rule
+
+In Billy, **1 Customer = 1 Subscription**. 
+
+If your app has "Workspaces" or "Organizations", the Billy `Customer` object should represent the **Organization**, not the individual human user.
+
+## Implementation Workflow
+
+1. A human user creates an account in your app.
+2. They create a new Workspace (e.g., "Acme Corp").
+3. You create a Billy Customer to represent "Acme Corp":
+   ```typescript
+   const customer = await billy.customers.create({
+     email: 'billing@acmecorp.com', // The org's billing email
+     name: 'Acme Corp Workspace',
+     externalUserId: 'org_abc123' // Your internal Workspace ID
+   });
+   ```
+4. When the human user invites 5 teammates to the workspace, you update the Billy Subscription to 6 seats.
+
+<Note>
+**Portal Access:** When any admin in the Workspace clicks "Billing", you generate a Portal Session for the *Workspace's* Billy Customer ID, granting them access to the central invoices and payment methods for the organization.
+</Note>

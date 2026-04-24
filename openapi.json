@@ -1,0 +1,6970 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/projects/{id}": {
+      "patch": {
+        "operationId": "ProjectsAuroraController_update",
+        "summary": "Update project",
+        "description": "Updates an existing project by its ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the project to update.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProjectDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Project updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized or insufficient permissions.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Project not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict - another project with the provided Stripe details already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Projects - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      },
+      "get": {
+        "operationId": "ProjectsAuroraController_getById",
+        "summary": "Get project by ID",
+        "description": "Returns details of a specific project by its ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the project to retrieve.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved project details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized or insufficient permissions.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Project not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Projects - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "ProjectsAuroraController_delete",
+        "summary": "Delete project",
+        "description": "Permanently deletes a project by its ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the project to delete.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Project deleted successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized or insufficient permissions.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Project not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Projects - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      }
+    },
+    "/api/projects/me": {
+      "get": {
+        "operationId": "ProjectsAuroraController_getUserProjects",
+        "summary": "Get user projects",
+        "description": "Returns a paginated list of projects belonging to the current user.",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "minimum": 0,
+              "exclusiveMinimum": true,
+              "example": 10,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "description": "Number of items to skip",
+            "schema": {
+              "minimum": 0,
+              "example": 0,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Cursor for cursor-based pagination",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orderBy",
+            "required": false,
+            "in": "query",
+            "description": "Order of sorting",
+            "schema": {
+              "example": "asc",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "orderByField",
+            "required": false,
+            "in": "query",
+            "description": "Field to sort by",
+            "schema": {
+              "example": "createdAt",
+              "type": "string"
+            }
+          },
+          {
+            "name": "mode",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "enum": [
+                "live",
+                "test"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved user projects.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Projects - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      }
+    },
+    "/api/projects/{id}/settings": {
+      "get": {
+        "operationId": "ProjectsAuroraController_getSettings",
+        "summary": "Get project settings",
+        "description": "Returns the settings for a specific project.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the project.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved project settings.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Projects - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "ProjectsAuroraController_updateSettings",
+        "summary": "Update project settings",
+        "description": "Updates the settings for a specific project.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the project.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProjectSettingsAuroraDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Project settings updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Projects - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      }
+    },
+    "/api/prices": {
+      "post": {
+        "operationId": "PricesAuroraController_create",
+        "summary": "Create new price",
+        "description": "Creates a new price for a product.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePriceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Price created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Prices - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      }
+    },
+    "/api/prices/product/{productId}": {
+      "get": {
+        "operationId": "PricesAuroraController_list",
+        "summary": "Get prices by product",
+        "description": "Returns a paginated list of prices for a specific product.",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "minimum": 0,
+              "exclusiveMinimum": true,
+              "example": 10,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "description": "Number of items to skip",
+            "schema": {
+              "minimum": 0,
+              "example": 0,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Cursor for cursor-based pagination",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orderBy",
+            "required": false,
+            "in": "query",
+            "description": "Order of sorting",
+            "schema": {
+              "example": "asc",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "orderByField",
+            "required": false,
+            "in": "query",
+            "description": "Field to sort by",
+            "schema": {
+              "example": "createdAt",
+              "type": "string"
+            }
+          },
+          {
+            "name": "productId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "currency",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minLength": 3,
+              "maxLength": 3,
+              "type": "string"
+            }
+          },
+          {
+            "name": "interval",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "enum": [
+                "month",
+                "year",
+                "week",
+                "day"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "enum": [
+                "active",
+                "failed",
+                "pending"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved prices.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Prices - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      }
+    },
+    "/api/prices/{id}": {
+      "get": {
+        "operationId": "PricesAuroraController_getById",
+        "summary": "Get price by ID",
+        "description": "Returns details of a specific price by its ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the price to retrieve.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved price details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Prices - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "PricesAuroraController_update",
+        "summary": "Update price",
+        "description": "Updates an existing price by its ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the price to update.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePriceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Price updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Prices - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "PricesAuroraController_delete",
+        "summary": "Delete price",
+        "description": "Permanently deletes a price by its ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the price to delete.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Price deleted successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Prices - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      }
+    },
+    "/api/billing/coupons": {
+      "post": {
+        "operationId": "BillingAuroraController_createCoupon",
+        "summary": "Create new coupon",
+        "description": "Creates a new discount coupon for a project.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PublicCreateCouponDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Coupon created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Billing - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      }
+    },
+    "/api/billing/coupons/sync": {
+      "post": {
+        "operationId": "BillingAuroraController_syncCoupon",
+        "summary": "Sync coupon from Stripe",
+        "description": "Synchronizes an existing Stripe coupon into the system.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PublicSyncCouponDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Coupon synchronized successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Billing - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      }
+    },
+    "/api/billing/coupons/{id}": {
+      "get": {
+        "operationId": "BillingAuroraController_getCoupon",
+        "summary": "Get coupon details",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the coupon.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved coupon.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicCouponDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Billing - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "BillingAuroraController_updateCoupon",
+        "summary": "Update coupon",
+        "description": "Updates a coupon's mutable fields such as maxRedemptions, valid or status.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the coupon to update.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PublicUpdateCouponDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Coupon updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Billing - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "BillingAuroraController_deleteCoupon",
+        "summary": "Delete coupon",
+        "description": "Soft-deletes a coupon by its ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the coupon to delete.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Coupon deleted successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Billing - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      }
+    },
+    "/api/billing/coupons/project/{projectId}": {
+      "get": {
+        "operationId": "BillingAuroraController_getProjectCoupons",
+        "summary": "Get project coupons",
+        "parameters": [
+          {
+            "name": "projectId",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the project.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "minimum": 0,
+              "exclusiveMinimum": true,
+              "example": 10,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "description": "Number of items to skip",
+            "schema": {
+              "minimum": 0,
+              "example": 0,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Cursor for cursor-based pagination",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orderBy",
+            "required": false,
+            "in": "query",
+            "description": "Order of sorting",
+            "schema": {
+              "example": "asc",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "orderByField",
+            "required": false,
+            "in": "query",
+            "description": "Field to sort by",
+            "schema": {
+              "example": "createdAt",
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved coupons.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PublicCouponDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Billing - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      }
+    },
+    "/api/billing/coupons/{couponId}/promotion-codes": {
+      "get": {
+        "operationId": "BillingAuroraController_getCouponPromoCodes",
+        "summary": "Get coupon promotion codes",
+        "parameters": [
+          {
+            "name": "couponId",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the coupon.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved promotion codes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PublicPromoCodeDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Billing - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      }
+    },
+    "/api/billing/promotion-codes": {
+      "post": {
+        "operationId": "BillingAuroraController_createPromotionCode",
+        "summary": "Create new promotion code",
+        "description": "Creates a new promotion code for a specific coupon.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PublicCreatePromoCodeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Promotion code created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Billing - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      }
+    },
+    "/api/billing/promotion-codes/{id}": {
+      "patch": {
+        "operationId": "BillingAuroraController_updatePromotionCode",
+        "summary": "Update promotion code",
+        "description": "Updates a promotion code's mutable fields. Only active, expiresAt, maxRedemptions, and metadata can be changed.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the promotion code to update.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PublicUpdatePromoCodeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Promotion code updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Billing - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "BillingAuroraController_deletePromotionCode",
+        "summary": "Delete promotion code",
+        "description": "Soft-deletes a promotion code by its ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the promotion code to delete.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Promotion code deleted successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Billing - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      }
+    },
+    "/api/billing/invoices": {
+      "post": {
+        "operationId": "BillingAuroraController_createInvoice",
+        "summary": "Create new invoice",
+        "description": "Creates a new manual invoice.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PublicCreateInvoiceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Invoice created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Billing - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      }
+    },
+    "/api/billing/invoices/{id}": {
+      "get": {
+        "operationId": "BillingAuroraController_getInvoice",
+        "summary": "Get invoice by ID",
+        "description": "Returns details of a single invoice.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the invoice.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved invoice.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicInvoiceDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Billing - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "BillingAuroraController_deleteInvoice",
+        "summary": "Delete invoice",
+        "description": "Permanently deletes an invoice. Only permitted for invoices with status \"draft\".",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the invoice to delete.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Invoice deleted successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Billing - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      }
+    },
+    "/api/billing/invoices/customer/{customerId}": {
+      "get": {
+        "operationId": "BillingAuroraController_getCustomerInvoices",
+        "summary": "Get customer invoices",
+        "description": "Returns a paginated list of invoices for a specific customer.",
+        "parameters": [
+          {
+            "name": "customerId",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the customer.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "minimum": 0,
+              "exclusiveMinimum": true,
+              "example": 10,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "description": "Number of items to skip",
+            "schema": {
+              "minimum": 0,
+              "example": 0,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Cursor for cursor-based pagination",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orderBy",
+            "required": false,
+            "in": "query",
+            "description": "Order of sorting",
+            "schema": {
+              "example": "asc",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "orderByField",
+            "required": false,
+            "in": "query",
+            "description": "Field to sort by",
+            "schema": {
+              "example": "createdAt",
+              "type": "string"
+            }
+          },
+          {
+            "name": "currency",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "from",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "name": "rangeBy",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved invoices.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PublicInvoiceDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Billing - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      }
+    },
+    "/api/billing/invoices/project/{projectId}": {
+      "get": {
+        "operationId": "BillingAuroraController_getProjectInvoices",
+        "summary": "Get project invoices",
+        "description": "Returns a paginated list of invoices for a specific project.",
+        "parameters": [
+          {
+            "name": "projectId",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the project.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "minimum": 0,
+              "exclusiveMinimum": true,
+              "example": 10,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "description": "Number of items to skip",
+            "schema": {
+              "minimum": 0,
+              "example": 0,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Cursor for cursor-based pagination",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orderBy",
+            "required": false,
+            "in": "query",
+            "description": "Order of sorting",
+            "schema": {
+              "example": "asc",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "orderByField",
+            "required": false,
+            "in": "query",
+            "description": "Field to sort by",
+            "schema": {
+              "example": "createdAt",
+              "type": "string"
+            }
+          },
+          {
+            "name": "currency",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "from",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "name": "rangeBy",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved invoices.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PublicInvoiceDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Billing - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      }
+    },
+    "/api/billing/invoices/{id}/void": {
+      "patch": {
+        "operationId": "BillingAuroraController_voidInvoice",
+        "summary": "Void invoice",
+        "description": "Voids an invoice. Only permitted for invoices with status \"open\". Once voided, cannot be un-voided.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the invoice to void.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Invoice voided successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Billing - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      }
+    },
+    "/api/billing/payment-methods/{customerId}": {
+      "get": {
+        "operationId": "BillingAuroraController_getPaymentMethods",
+        "summary": "Get customer payment methods",
+        "description": "Returns a list of payment methods for a specific customer.",
+        "parameters": [
+          {
+            "name": "customerId",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the customer.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved payment methods.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PublicPaymentMethodDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Billing - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      }
+    },
+    "/api/billing/payment-methods/{id}": {
+      "delete": {
+        "operationId": "BillingAuroraController_deletePaymentMethod",
+        "summary": "Delete payment method",
+        "description": "Removes a payment method from a customer.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the payment method to delete.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Payment method deleted successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Billing - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      }
+    },
+    "/api/portal/sessions": {
+      "post": {
+        "operationId": "PortalAuroraController_createSession",
+        "summary": "Create a portal session",
+        "description": "Creates a short-lived magic link URL to access the customer billing portal.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PublicCreatePortalSessionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Portal session created successfully."
+          }
+        },
+        "tags": [
+          "Portal - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      }
+    },
+    "/api/subscriptions/enterprise": {
+      "post": {
+        "operationId": "SubscriptionsAuroraController_createEnterpriseSubscription",
+        "summary": "Create new subscription",
+        "description": "Creates a new subscription for a customer.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEnterpriseSubscriptionAuroraDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Subscription created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden access.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Subscriptions - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      }
+    },
+    "/api/subscriptions/project/{projectId}": {
+      "get": {
+        "operationId": "SubscriptionsAuroraController_list",
+        "summary": "Get subscriptions by project",
+        "description": "Returns a paginated list of subscriptions for a specific project.",
+        "parameters": [
+          {
+            "name": "projectId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "minimum": 0,
+              "exclusiveMinimum": true,
+              "example": 10,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "description": "Number of items to skip",
+            "schema": {
+              "minimum": 0,
+              "example": 0,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Cursor for cursor-based pagination",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orderBy",
+            "required": false,
+            "in": "query",
+            "description": "Order of sorting",
+            "schema": {
+              "example": "asc",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "orderByField",
+            "required": false,
+            "in": "query",
+            "description": "Field to sort by",
+            "schema": {
+              "example": "createdAt",
+              "type": "string"
+            }
+          },
+          {
+            "name": "priceId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "cancelAtPeriodEnd",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "isEnterprise",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "isTrial",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved subscriptions.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Subscriptions - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      }
+    },
+    "/api/subscriptions/{id}": {
+      "get": {
+        "operationId": "SubscriptionsAuroraController_getById",
+        "summary": "Get subscription by ID",
+        "description": "Returns details of a specific subscription by its ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the subscription to retrieve.",
+            "schema": {
+              "example": "550e8400-e29b-41d4-a716-446655440000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved subscription details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Subscription not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Subscriptions - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "SubscriptionsAuroraController_update",
+        "summary": "Update subscription",
+        "description": "Updates an existing subscription by its ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the subscription to update.",
+            "schema": {
+              "example": "550e8400-e29b-41d4-a716-446655440000",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSubscriptionAuroraDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Subscription updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Subscription not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Subscriptions - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "SubscriptionsAuroraController_delete",
+        "summary": "Delete subscription",
+        "description": "Permanently deletes a subscription by its ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the subscription to delete.",
+            "schema": {
+              "example": "550e8400-e29b-41d4-a716-446655440000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Subscription deleted successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Subscription not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Subscriptions - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      }
+    },
+    "/api/subscriptions/{id}/seats": {
+      "get": {
+        "operationId": "SubscriptionsAuroraController_getSeats",
+        "summary": "Get subscription seats",
+        "description": "Returns a paginated list of seats for a specific subscription.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the subscription.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "minimum": 0,
+              "exclusiveMinimum": true,
+              "example": 10,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "description": "Number of items to skip",
+            "schema": {
+              "minimum": 0,
+              "example": 0,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Cursor for cursor-based pagination",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orderBy",
+            "required": false,
+            "in": "query",
+            "description": "Order of sorting",
+            "schema": {
+              "example": "asc",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "orderByField",
+            "required": false,
+            "in": "query",
+            "description": "Field to sort by",
+            "schema": {
+              "example": "createdAt",
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved subscription seats.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Subscriptions - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      }
+    },
+    "/api/subscriptions/customer/{customerId}": {
+      "get": {
+        "operationId": "SubscriptionsAuroraController_getByCustomerId",
+        "summary": "Get subscription by Customer ID",
+        "description": "Returns the current subscription for a customer.",
+        "parameters": [
+          {
+            "name": "customerId",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the customer.",
+            "schema": {
+              "example": "550e8400-e29b-41d4-a716-446655440000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved customer subscription.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Subscription not found for this customer.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Subscriptions - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      }
+    },
+    "/api/subscriptions/{id}/enterprise": {
+      "patch": {
+        "operationId": "SubscriptionsAuroraController_updateEnterprise",
+        "summary": "Update enterprise subscription",
+        "description": "Updates an existing enterprise subscription by its ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the subscription to update.",
+            "schema": {
+              "example": "550e8400-e29b-41d4-a716-446655440000",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateEnterpriseSubscriptionAuroraDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enterprise subscription updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Subscription not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Subscriptions - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      }
+    },
+    "/api/subscriptions/{id}/upgrade": {
+      "patch": {
+        "operationId": "SubscriptionsAuroraController_upgradeSubscription",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpgradeSubscriptionAuroraDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Subscriptions - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      }
+    },
+    "/api/subscriptions/{id}/downgrade": {
+      "patch": {
+        "operationId": "SubscriptionsAuroraController_downgradeSubscription",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpgradeSubscriptionAuroraDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Subscriptions - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      }
+    },
+    "/api/customers": {
+      "post": {
+        "operationId": "CustomersAuroraController_create",
+        "summary": "Create new customer",
+        "description": "Creates a new customer for a project.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCustomerDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Customer created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Customers - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      },
+      "get": {
+        "operationId": "CustomersAuroraController_list",
+        "summary": "Get customers by project",
+        "description": "Returns a paginated list of customers for a specific project.",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "minimum": 0,
+              "exclusiveMinimum": true,
+              "example": 10,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "description": "Number of items to skip",
+            "schema": {
+              "minimum": 0,
+              "example": 0,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Cursor for cursor-based pagination",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orderBy",
+            "required": false,
+            "in": "query",
+            "description": "Order of sorting",
+            "schema": {
+              "example": "asc",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "orderByField",
+            "required": false,
+            "in": "query",
+            "description": "Field to sort by",
+            "schema": {
+              "example": "createdAt",
+              "type": "string"
+            }
+          },
+          {
+            "name": "projectId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "email",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "externalUserId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved customers.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Customers - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      }
+    },
+    "/api/customers/{id}": {
+      "get": {
+        "operationId": "CustomersAuroraController_getById",
+        "summary": "Get customer by ID",
+        "description": "Returns details of a specific customer by its ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the customer to retrieve.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved customer details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Customers - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "CustomersAuroraController_update",
+        "summary": "Update customer",
+        "description": "Updates an existing customer by its ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the customer to update.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCustomerDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Customer updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Customers - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "CustomersAuroraController_delete",
+        "summary": "Delete customer",
+        "description": "Permanently deletes a customer by its ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the customer to delete.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Customer deleted successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Customers - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      }
+    },
+    "/api/customers/{id}/ban": {
+      "patch": {
+        "operationId": "CustomersAuroraController_banCustomer",
+        "summary": "Ban customer",
+        "description": "Hard bans a customer by its ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the customer to delete.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BanCustomerDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Customer deleted successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Customers - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      }
+    },
+    "/api/tokens/add": {
+      "post": {
+        "operationId": "TokensAuroraController_add",
+        "summary": "Add tokens to customer",
+        "description": "Increases the available token balance for a specific customer.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTokensAuroraDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Tokens added successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Tokens - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      }
+    },
+    "/api/tokens/freeze": {
+      "post": {
+        "operationId": "TokensAuroraController_freeze",
+        "summary": "Freeze tokens for customer",
+        "description": "Freezes (reserves) a token amount for a specific customer, preventing spending until unfrozen.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTokensAuroraDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Tokens frozen successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Tokens - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      }
+    },
+    "/api/tokens/unfreeze": {
+      "post": {
+        "operationId": "TokensAuroraController_unfreeze",
+        "summary": "Unfreeze tokens for customer",
+        "description": "Releases previously frozen tokens, making them available for the customer again.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTokensAuroraDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Tokens unfrozen successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Tokens - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      }
+    },
+    "/api/tokens/deduct": {
+      "post": {
+        "operationId": "TokensAuroraController_deduct",
+        "summary": "Deduct tokens from customer",
+        "description": "Decreases the available token balance for a specific customer.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTokensAuroraDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Tokens deducted successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Tokens - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      }
+    },
+    "/api/tokens/balance/{customerId}": {
+      "get": {
+        "operationId": "TokensAuroraController_getBalance",
+        "summary": "Get customer token balance",
+        "description": "Returns the current token balance for a specific customer.",
+        "parameters": [
+          {
+            "name": "customerId",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the customer.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved token balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Tokens - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      }
+    },
+    "/api/tokens/ledgers/{customerId}": {
+      "get": {
+        "operationId": "TokensAuroraController_getCustomerLedgers",
+        "summary": "Get customer token balance",
+        "description": "Returns the current token balance for a specific customer.",
+        "parameters": [
+          {
+            "name": "customerId",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the customer.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved token balance.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Tokens - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      }
+    },
+    "/api/tokens/usage/{projectId}": {
+      "get": {
+        "operationId": "TokensAuroraController_getUsageData",
+        "summary": "Get project token usage data",
+        "parameters": [
+          {
+            "name": "projectId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "timeFrame",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Tokens - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      }
+    },
+    "/api/alerts/project/{projectId}": {
+      "get": {
+        "operationId": "AlertsAuroraController_getByProject",
+        "summary": "Get project alerts",
+        "parameters": [
+          {
+            "name": "projectId",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the project.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "minimum": 0,
+              "exclusiveMinimum": true,
+              "example": 10,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "description": "Number of items to skip",
+            "schema": {
+              "minimum": 0,
+              "example": 0,
+              "type": "integer"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Cursor for cursor-based pagination",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orderBy",
+            "required": false,
+            "in": "query",
+            "description": "Order of sorting",
+            "schema": {
+              "example": "asc",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "orderByField",
+            "required": false,
+            "in": "query",
+            "description": "Field to sort by",
+            "schema": {
+              "example": "createdAt",
+              "type": "string"
+            }
+          },
+          {
+            "name": "read",
+            "required": false,
+            "in": "query",
+            "description": "Filters alerts based on their read/unread status. Set to true to retrieve acknowledged alerts, or false to fetch pending notifications that require attention.",
+            "schema": {
+              "example": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "type",
+            "required": false,
+            "in": "query",
+            "description": "Granular filter for domain-specific alert categories. This allows focusing on critical event types such as financial discrepancies, lifecycle transitions, or usage thresholds.",
+            "schema": {
+              "example": "payment_failed",
+              "enum": [
+                "payment_failed",
+                "paid",
+                "payment_action_required",
+                "subscription_canceled",
+                "subscription_past_due",
+                "subscription_trial_will_end",
+                "subscription_paused",
+                "subscription_renewed",
+                "subscription_upgraded",
+                "subscription_downgraded",
+                "subscription_reactivated",
+                "charge_dispute_created",
+                "low_tokens",
+                "invoice_upcoming",
+                "tokens_expired",
+                "checkout_session_expired",
+                "checkout_session_completed",
+                "dispute_created",
+                "customer_deleted"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "customerId",
+            "required": false,
+            "in": "query",
+            "description": "The unique identifier of the customer to filter alerts for. Essential for tenant-specific troubleshooting and audit trails.",
+            "schema": {
+              "format": "uuid",
+              "example": "6f33878b-155e-407b-967a-18e38f4207f6",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved alerts."
+          }
+        },
+        "tags": [
+          "Alerts - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      }
+    },
+    "/api/alerts/project/{projectId}/count": {
+      "get": {
+        "operationId": "AlertsAuroraController_countByProject",
+        "summary": "Count project alerts",
+        "parameters": [
+          {
+            "name": "projectId",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the project.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved alerts count.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Alerts - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      }
+    },
+    "/api/alerts/{id}": {
+      "get": {
+        "operationId": "AlertsAuroraController_getById",
+        "summary": "Retrieve alert by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the alert",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved alert",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicAlertDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Alert with this identifier not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Alerts - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "AlertsAuroraController_markAsRead",
+        "summary": "Mark alert as read",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The ID of the alert",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully updated alert",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponseDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Alert with this identifier does not belong to the current user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Alert with this identifier not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Alerts - Aurora"
+        ],
+        "security": [
+          {
+            "API Key": []
+          }
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Billy API",
+    "description": "The Billy API documentation. This API handles user authentication, profile management, and project coordination.",
+    "version": "1.0",
+    "contact": {
+      "name": "Kuba Nowacki",
+      "url": "https://usebilly.dev",
+      "email": "kuba@usebilly.dev"
+    }
+  },
+  "tags": [
+    {
+      "name": "Authentication",
+      "description": "Endpoints for user login, registration, and password management"
+    },
+    {
+      "name": "Users",
+      "description": "Endpoints for managing user profiles and data"
+    }
+  ],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "JWT-auth": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http",
+        "description": "Enter JWT token"
+      }
+    },
+    "schemas": {
+      "LoginDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "The email address of the user",
+            "example": "user@example.com"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The password of the user",
+            "example": "SecurePassword123!"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ],
+        "additionalProperties": false,
+        "title": "LoginDto",
+        "description": "Request body for user login"
+      },
+      "RegisterDto": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The first name of the user",
+            "example": "John"
+          },
+          "lastName": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The last name of the user",
+            "example": "Doe"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "The unique email address for the account",
+            "example": "john.doe@example.com"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 8,
+            "description": "The secure password for the account (min 8 characters)",
+            "example": "VerySecurePassword123!"
+          }
+        },
+        "required": [
+          "firstName",
+          "lastName",
+          "email",
+          "password"
+        ],
+        "additionalProperties": false,
+        "title": "RegisterDto",
+        "description": "Request body for user registration"
+      },
+      "ForgotPasswordDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "The email address of the user who forgot their password",
+            "example": "user@example.com"
+          }
+        },
+        "required": [
+          "email"
+        ],
+        "additionalProperties": false,
+        "title": "ForgotPasswordDto",
+        "description": "Request body for requesting a password reset link"
+      },
+      "ResetPasswordDto": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The password reset token sent via email",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+          },
+          "newPassword": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The new password for the user",
+            "example": "NewSecurePassword123!"
+          }
+        },
+        "required": [
+          "token",
+          "newPassword"
+        ],
+        "additionalProperties": false,
+        "title": "ResetPasswordDto",
+        "description": "Request body for resetting user password using a token"
+      },
+      "UpdatePasswordDto": {
+        "type": "object",
+        "properties": {
+          "oldPassword": {
+            "type": "string",
+            "description": "The current password of the user",
+            "example": "CurrentSecurePassword123!"
+          },
+          "newPassword": {
+            "type": "string",
+            "description": "The new password to set",
+            "example": "NewSecurePassword123!"
+          },
+          "confirmPassword": {
+            "type": "string",
+            "description": "The confirmation of the new password",
+            "example": "NewSecurePassword123!"
+          }
+        },
+        "required": [
+          "oldPassword",
+          "newPassword",
+          "confirmPassword"
+        ],
+        "additionalProperties": false,
+        "title": "UpdatePasswordDto",
+        "description": "Request body for changing authenticated user password"
+      },
+      "UpdateUserDto": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "description": "The first name of the user",
+            "example": "John"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "The last name of the user",
+            "example": "Doe"
+          },
+          "avatarUrl": {
+            "type": "string",
+            "description": "The URL to the user profile avatar image",
+            "example": "https://example.com/avatars/johndoe.jpg"
+          },
+          "status": {
+            "type": "string",
+            "description": "The account status of the user",
+            "enum": [
+              "active",
+              "inactive",
+              "pending"
+            ],
+            "example": "active"
+          },
+          "tier": {
+            "type": "string",
+            "description": "The subscription tier of the user",
+            "enum": [
+              "free",
+              "pro",
+              "enterprise"
+            ],
+            "example": "pro"
+          },
+          "badgesToAdd": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "A list of badge names to add to the user profile",
+            "example": [
+              "Verified",
+              "Early Adopter"
+            ]
+          },
+          "activeProjectId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "A active profile id",
+            "example": [
+              "proj_123123123"
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "title": "UpdateUserDto",
+        "description": "Request body for updating a user profile"
+      },
+      "CreateProjectDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "stripeSecretKey": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string"
+          },
+          "sync": {
+            "default": false,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "name",
+          "stripeSecretKey",
+          "mode"
+        ],
+        "additionalProperties": false
+      },
+      "UpdateProjectDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "stripeSecretKey": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetProjectsDto": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "description": "Number of items per page",
+            "example": 10
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Number of items to skip",
+            "example": 0
+          },
+          "cursor": {
+            "type": "string",
+            "description": "Cursor for cursor-based pagination"
+          },
+          "orderBy": {
+            "type": "string",
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "description": "Order of sorting",
+            "example": "asc"
+          },
+          "orderByField": {
+            "type": "string",
+            "description": "Field to sort by",
+            "example": "createdAt"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "live",
+              "test"
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "search": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ApiSuccessResponseDto": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "description": "The response data payload"
+          }
+        },
+        "title": "ApiSuccessResponse",
+        "description": "Standard wrapper for successful API responses"
+      },
+      "ApiErrorResponseDto": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "statusCode": {
+                "type": "number",
+                "example": 400
+              },
+              "message": {
+                "type": "string",
+                "example": "Error message"
+              },
+              "error": {
+                "type": "string",
+                "example": "Bad Request"
+              },
+              "code": {
+                "type": "string",
+                "example": "VALIDATION_ERROR"
+              },
+              "metadata": {
+                "type": "object",
+                "additionalProperties": {},
+                "example": {
+                  "field": "email",
+                  "reason": "invalid"
+                }
+              },
+              "timestamp": {
+                "type": "string",
+                "example": "2025-01-15T10:30:00.000Z"
+              },
+              "path": {
+                "type": "string",
+                "example": "/api/resource"
+              }
+            },
+            "required": [
+              "statusCode",
+              "message",
+              "error",
+              "code",
+              "timestamp"
+            ]
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "title": "ApiErrorResponse",
+        "description": "Standard wrapper for API error responses"
+      },
+      "UpdateProjectSettingsDto": {
+        "type": "object",
+        "properties": {
+          "trialDays": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "tokenResetInterval": {
+            "type": "string",
+            "enum": [
+              "monthly",
+              "weekly",
+              "never"
+            ]
+          },
+          "dunningEnabled": {
+            "type": "boolean"
+          },
+          "dunningRetryDays": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "cancelAtPeriodEnd": {
+            "type": "boolean"
+          },
+          "defaultCurrency": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 3
+          },
+          "defaultTokens": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "tokenExpiryEnabled": {
+            "type": "boolean"
+          },
+          "tokenExpiryDays": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "taxEnabled": {
+            "type": "boolean"
+          },
+          "allowedCountries": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "supportEmail": {
+            "type": "string",
+            "format": "email"
+          },
+          "brandColor": {
+            "type": "string",
+            "pattern": "^#([A-Fa-f0-9]{3}){1,2}$"
+          },
+          "logoUrl": {
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "uri"
+              },
+              {
+                "type": "string",
+                "minLength": 0,
+                "maxLength": 0
+              }
+            ]
+          },
+          "tokenExpiryMode": {
+            "type": "string",
+            "enum": [
+              "period",
+              "rolling",
+              "never"
+            ]
+          },
+          "upgradeTokenBehavior": {
+            "type": "string"
+          },
+          "downgradeTokenBehavior": {
+            "type": "string"
+          },
+          "upgradeProration": {
+            "type": "string"
+          },
+          "downgradeProration": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "upgradeTokenBehavior",
+          "downgradeTokenBehavior",
+          "upgradeProration",
+          "downgradeProration"
+        ],
+        "title": "UpdateProjectSettings",
+        "description": "Schema for updating project settings"
+      },
+      "UpdateProjectSettingsAuroraDto": {
+        "type": "object",
+        "properties": {
+          "trialDays": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "tokenResetInterval": {
+            "type": "string",
+            "enum": [
+              "monthly",
+              "weekly",
+              "never"
+            ]
+          },
+          "dunningEnabled": {
+            "type": "boolean"
+          },
+          "dunningRetryDays": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "cancelAtPeriodEnd": {
+            "type": "boolean"
+          },
+          "defaultCurrency": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 3
+          },
+          "defaultTokens": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "tokenExpiryEnabled": {
+            "type": "boolean"
+          },
+          "tokenExpiryDays": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "taxEnabled": {
+            "type": "boolean"
+          },
+          "allowedCountries": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "supportEmail": {
+            "type": "string",
+            "format": "email"
+          },
+          "brandColor": {
+            "type": "string",
+            "pattern": "^#([A-Fa-f0-9]{3}){1,2}$"
+          },
+          "logoUrl": {
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "uri"
+              },
+              {
+                "type": "string",
+                "minLength": 0,
+                "maxLength": 0
+              }
+            ]
+          },
+          "tokenExpiryMode": {
+            "type": "string",
+            "enum": [
+              "period",
+              "rolling",
+              "never"
+            ]
+          },
+          "upgradeTokenBehavior": {
+            "type": "string"
+          },
+          "downgradeTokenBehavior": {
+            "type": "string"
+          },
+          "upgradeProration": {
+            "type": "string"
+          },
+          "downgradeProration": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "upgradeTokenBehavior",
+          "downgradeTokenBehavior",
+          "upgradeProration",
+          "downgradeProration"
+        ],
+        "title": "UpdateProjectSettings",
+        "description": "Schema for updating project settings"
+      },
+      "CreatePriceDto": {
+        "type": "object",
+        "properties": {
+          "productId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 100
+          },
+          "stripePriceId": {
+            "type": "string",
+            "nullable": true
+          },
+          "stripeProductId": {
+            "type": "string",
+            "nullable": true
+          },
+          "unitAmount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "currency": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 3
+          },
+          "billingType": {
+            "type": "string",
+            "enum": [
+              "usage_based",
+              "flat",
+              "per_seat"
+            ]
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "recurring",
+              "one_time"
+            ]
+          },
+          "maxSeats": {
+            "type": "number",
+            "nullable": true
+          },
+          "minSeats": {
+            "type": "number",
+            "nullable": true
+          },
+          "interval": {
+            "type": "string",
+            "enum": [
+              "month",
+              "year",
+              "week",
+              "day"
+            ],
+            "nullable": true
+          },
+          "intervalCount": {
+            "type": "integer",
+            "minimum": 1,
+            "nullable": true
+          },
+          "usageType": {
+            "type": "string",
+            "enum": [
+              "licensed",
+              "metered"
+            ],
+            "nullable": true
+          },
+          "invoiceOnly": {
+            "type": "boolean"
+          },
+          "taxBehavior": {
+            "default": "unspecified",
+            "type": "string",
+            "enum": [
+              "inclusive",
+              "exclusive",
+              "unspecified"
+            ]
+          },
+          "tiersMode": {
+            "type": "string",
+            "enum": [
+              "graduated",
+              "volume"
+            ],
+            "nullable": true
+          },
+          "tiers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "upTo": {
+                  "oneOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 0,
+                      "exclusiveMinimum": true
+                    },
+                    {
+                      "type": "string",
+                      "enum": [
+                        "inf"
+                      ]
+                    }
+                  ]
+                },
+                "unitAmount": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "nullable": true
+                },
+                "unitAmountDecimal": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "flatAmount": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "nullable": true
+                },
+                "flatAmountDecimal": {
+                  "type": "string",
+                  "nullable": true
+                }
+              },
+              "required": [
+                "upTo",
+                "unitAmount",
+                "unitAmountDecimal",
+                "flatAmount",
+                "flatAmountDecimal"
+              ]
+            },
+            "nullable": true
+          },
+          "billingScheme": {
+            "default": "per_unit",
+            "type": "string",
+            "enum": [
+              "per_unit",
+              "tiered"
+            ]
+          },
+          "transformQuantity": {
+            "type": "object",
+            "properties": {
+              "divideBy": {
+                "type": "integer",
+                "minimum": 0,
+                "exclusiveMinimum": true
+              },
+              "round": {
+                "type": "string",
+                "enum": [
+                  "up",
+                  "down"
+                ]
+              }
+            },
+            "required": [
+              "divideBy",
+              "round"
+            ],
+            "nullable": true
+          },
+          "nickname": {
+            "type": "string",
+            "maxLength": 250,
+            "nullable": true
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "active": {
+            "default": true,
+            "type": "boolean"
+          },
+          "livemode": {
+            "default": false,
+            "type": "boolean"
+          },
+          "tokens": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "trialDays": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "productId",
+          "name",
+          "unitAmount",
+          "currency",
+          "billingType",
+          "type"
+        ],
+        "additionalProperties": false
+      },
+      "UpdatePriceDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 100
+          },
+          "stripePriceId": {
+            "type": "string",
+            "nullable": true
+          },
+          "stripeProductId": {
+            "type": "string",
+            "nullable": true
+          },
+          "unitAmount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "currency": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 3
+          },
+          "interval": {
+            "type": "string",
+            "enum": [
+              "month",
+              "year",
+              "week",
+              "day"
+            ]
+          },
+          "intervalCount": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "usageType": {
+            "type": "string",
+            "enum": [
+              "licensed",
+              "metered"
+            ]
+          },
+          "taxBehavior": {
+            "type": "string",
+            "enum": [
+              "inclusive",
+              "exclusive",
+              "unspecified"
+            ]
+          },
+          "tiersMode": {
+            "type": "string",
+            "enum": [
+              "graduated",
+              "volume"
+            ],
+            "nullable": true
+          },
+          "tiers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "upTo": {
+                  "oneOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 0,
+                      "exclusiveMinimum": true
+                    },
+                    {
+                      "type": "string",
+                      "enum": [
+                        "inf"
+                      ]
+                    }
+                  ]
+                },
+                "unitAmount": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "nullable": true
+                },
+                "unitAmountDecimal": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "flatAmount": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "nullable": true
+                },
+                "flatAmountDecimal": {
+                  "type": "string",
+                  "nullable": true
+                }
+              },
+              "required": [
+                "upTo",
+                "unitAmount",
+                "unitAmountDecimal",
+                "flatAmount",
+                "flatAmountDecimal"
+              ]
+            },
+            "nullable": true
+          },
+          "billingScheme": {
+            "type": "string",
+            "enum": [
+              "per_unit",
+              "tiered"
+            ]
+          },
+          "transformQuantity": {
+            "type": "object",
+            "properties": {
+              "divideBy": {
+                "type": "integer",
+                "minimum": 0,
+                "exclusiveMinimum": true
+              },
+              "round": {
+                "type": "string",
+                "enum": [
+                  "up",
+                  "down"
+                ]
+              }
+            },
+            "required": [
+              "divideBy",
+              "round"
+            ],
+            "nullable": true
+          },
+          "nickname": {
+            "type": "string",
+            "maxLength": 250,
+            "nullable": true
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "livemode": {
+            "type": "boolean"
+          },
+          "tokens": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "trialDays": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "active",
+              "failed"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateApiKeyDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 100,
+            "description": "The name of the API key",
+            "example": "Main SDK Key"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "The expiration date of the API key",
+            "example": "2026-12-31T23:59:59Z"
+          }
+        },
+        "required": [
+          "name",
+          "expiresAt"
+        ],
+        "additionalProperties": false,
+        "title": "CreateApiKeyDto",
+        "description": "Request body for creating a new API key"
+      },
+      "UpdateApiKeyDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 100,
+            "description": "The new name of the API key",
+            "example": "New Active Key"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "inactive",
+              "revoked"
+            ],
+            "description": "The new status of the API key",
+            "example": "revoked"
+          }
+        },
+        "additionalProperties": false,
+        "title": "UpdateApiKeyDto",
+        "description": "Request body for updating an existing API key"
+      },
+      "ListApiKeysDto": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "description": "Number of items per page",
+            "example": 10
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Number of items to skip",
+            "example": 0
+          },
+          "cursor": {
+            "type": "string",
+            "description": "Cursor for cursor-based pagination"
+          },
+          "orderBy": {
+            "type": "string",
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "description": "Order of sorting",
+            "example": "asc"
+          },
+          "orderByField": {
+            "type": "string",
+            "description": "Field to sort by",
+            "example": "createdAt"
+          },
+          "search": {
+            "type": "string",
+            "description": "Search by API key name",
+            "example": "Main"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "inactive",
+              "expired",
+              "revoked"
+            ],
+            "description": "Filter by API key status",
+            "example": "active"
+          }
+        },
+        "additionalProperties": false,
+        "title": "ListApiKeysDto",
+        "description": "Query parameters for listing API keys with pagination and filtering"
+      },
+      "CreateProductDto": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "stripeProductId": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": {
+            "type": "string"
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            },
+            "maxItems": 8
+          },
+          "marketingFeatures": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 80
+                }
+              },
+              "required": [
+                "name"
+              ]
+            },
+            "maxItems": 15
+          },
+          "taxCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "statementDescriptor": {
+            "type": "string",
+            "maxLength": 22,
+            "nullable": true
+          },
+          "isEnterprise": {
+            "default": false,
+            "type": "boolean"
+          },
+          "contactSalesUrl": {
+            "type": "string"
+          },
+          "unitLabel": {
+            "type": "string",
+            "maxLength": 12,
+            "nullable": true
+          }
+        },
+        "required": [
+          "projectId",
+          "name"
+        ],
+        "title": "CreateProduct",
+        "description": "Schema for creating a new product"
+      },
+      "UpdateProductDto": {
+        "type": "object",
+        "properties": {
+          "stripeProductId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": {
+            "type": "string"
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            },
+            "maxItems": 8
+          },
+          "marketingFeatures": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 80
+                }
+              },
+              "required": [
+                "name"
+              ]
+            },
+            "maxItems": 15
+          },
+          "taxCode": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "statementDescriptor": {
+            "type": "string",
+            "maxLength": 22
+          },
+          "unitLabel": {
+            "type": "string",
+            "maxLength": 12
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "active",
+              "failed"
+            ]
+          }
+        },
+        "title": "UpdateProduct",
+        "description": "Schema for updating an existing product"
+      },
+      "CreateCouponDto": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "format": "uuid",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "stripeCouponId": {
+            "type": "string",
+            "example": "25OFF"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true,
+            "example": "25% Off Summer Sale"
+          },
+          "currency": {
+            "type": "string",
+            "nullable": true,
+            "example": "usd"
+          },
+          "amountOff": {
+            "type": "integer",
+            "minimum": 0,
+            "nullable": true,
+            "example": 1000
+          },
+          "percentOff": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100,
+            "nullable": true,
+            "example": 25
+          },
+          "duration": {
+            "type": "string",
+            "enum": [
+              "once",
+              "repeating",
+              "forever"
+            ],
+            "example": "repeating"
+          },
+          "durationInMonths": {
+            "type": "integer",
+            "minimum": 1,
+            "nullable": true,
+            "example": 3
+          },
+          "maxRedemptions": {
+            "type": "integer",
+            "minimum": 1,
+            "nullable": true,
+            "example": 100
+          },
+          "appliesTo": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "example": [
+              "prod_123"
+            ]
+          },
+          "currencyOptions": {
+            "type": "object",
+            "additionalProperties": {},
+            "nullable": true
+          },
+          "livemode": {
+            "default": false,
+            "type": "boolean"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "required": [
+          "projectId",
+          "name",
+          "currency",
+          "amountOff",
+          "percentOff",
+          "duration",
+          "durationInMonths",
+          "maxRedemptions"
+        ]
+      },
+      "CreatePromoCodeDto": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "format": "uuid",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "couponId": {
+            "type": "string",
+            "format": "uuid",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "stripePromotionCodeId": {
+            "type": "string",
+            "example": "promo_123"
+          },
+          "code": {
+            "type": "string",
+            "example": "SUMMER2024"
+          },
+          "active": {
+            "default": true,
+            "type": "boolean"
+          },
+          "stripeCustomerId": {
+            "type": "string",
+            "nullable": true,
+            "example": "cus_123"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "maxRedemptions": {
+            "type": "integer",
+            "minimum": 1,
+            "nullable": true,
+            "example": 100
+          },
+          "firstTimeTransactionOnly": {
+            "default": false,
+            "type": "boolean"
+          },
+          "minimumAmount": {
+            "type": "integer",
+            "minimum": 0,
+            "nullable": true
+          },
+          "minimumAmountCurrency": {
+            "type": "string",
+            "nullable": true,
+            "example": "usd"
+          },
+          "currencyOptions": {
+            "type": "object",
+            "additionalProperties": {},
+            "nullable": true
+          },
+          "livemode": {
+            "default": false,
+            "type": "boolean"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "sync": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "projectId",
+          "couponId",
+          "code",
+          "sync"
+        ]
+      },
+      "UpdatePortalSettingsDto": {
+        "type": "object",
+        "properties": {
+          "userTier": {
+            "type": "string"
+          },
+          "logoUrl": {
+            "type": "string"
+          },
+          "primaryColor": {
+            "type": "string"
+          },
+          "bgColor": {
+            "type": "string"
+          },
+          "foreground": {
+            "type": "string"
+          },
+          "foregroundSecondary": {
+            "type": "string"
+          },
+          "border": {
+            "type": "string"
+          },
+          "shadowSize": {
+            "type": "integer"
+          },
+          "card": {
+            "type": "string"
+          },
+          "shadowColor": {
+            "type": "string"
+          },
+          "darkBgColor": {
+            "type": "string"
+          },
+          "darkForeground": {
+            "type": "string"
+          },
+          "darkForegroundSecondary": {
+            "type": "string"
+          },
+          "darkBorder": {
+            "type": "string"
+          },
+          "darkCard": {
+            "type": "string"
+          },
+          "darkShadowColor": {
+            "type": "string"
+          },
+          "borderRadius": {
+            "type": "integer"
+          },
+          "borderWidth": {
+            "type": "integer"
+          },
+          "fontFamily": {
+            "type": "string"
+          },
+          "textSize": {
+            "type": "integer"
+          },
+          "subTextSize": {
+            "type": "integer"
+          },
+          "headingTextSize": {
+            "type": "integer"
+          },
+          "customDomain": {
+            "type": "string"
+          },
+          "darkModeEnabled": {
+            "type": "boolean"
+          },
+          "upgrade": {
+            "type": "object",
+            "properties": {
+              "enabled": {
+                "type": "boolean"
+              },
+              "applicablePlans": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "proration": {
+                "type": "string"
+              },
+              "requireCardUpdateIfEmpty": {
+                "type": "boolean"
+              },
+              "instantAccess": {
+                "type": "boolean"
+              },
+              "upgradeCouponId": {
+                "type": "string"
+              },
+              "recommendedPlanId": {
+                "type": "string"
+              },
+              "showValueComparison": {
+                "type": "boolean"
+              },
+              "highlightFeatureId": {
+                "type": "string"
+              },
+              "successMessage": {
+                "type": "string"
+              },
+              "celebrationEnabled": {
+                "type": "boolean"
+              },
+              "redirectUrlAfterSuccess": {
+                "type": "string"
+              },
+              "showTrustBadges": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "proration"
+            ]
+          },
+          "downgrade": {
+            "type": "object",
+            "properties": {
+              "enabled": {
+                "type": "boolean"
+              },
+              "applicablePlans": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "tokenBehavior": {
+                "type": "string",
+                "enum": [
+                  "reset",
+                  "keep",
+                  "expire_immediately"
+                ]
+              },
+              "proration": {
+                "type": "string"
+              },
+              "preventDowngradeWithOverdueInvoices": {
+                "type": "boolean"
+              },
+              "minSubscriptionAge": {
+                "type": "integer"
+              },
+              "offerCouponId": {
+                "type": "string"
+              },
+              "offerPause": {
+                "type": "boolean"
+              },
+              "supportContactEnabled": {
+                "type": "boolean"
+              },
+              "supportChannels": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    },
+                    "url": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "link",
+                        "chat",
+                        "email"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "title",
+                    "url",
+                    "type"
+                  ]
+                }
+              },
+              "gatherReason": {
+                "type": "boolean"
+              },
+              "reasonsOptions": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "confirmationMessage": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "tokenBehavior",
+              "proration"
+            ]
+          },
+          "paymentMethod": {
+            "type": "object",
+            "properties": {
+              "enabled": {
+                "type": "boolean"
+              },
+              "allowAdding": {
+                "type": "boolean"
+              },
+              "allowRemoving": {
+                "type": "boolean"
+              },
+              "allowSettingDefault": {
+                "type": "boolean"
+              }
+            }
+          },
+          "customerData": {
+            "type": "object",
+            "properties": {
+              "enabled": {
+                "type": "boolean"
+              },
+              "allowEditEmail": {
+                "type": "boolean"
+              },
+              "allowEditAddress": {
+                "type": "boolean"
+              },
+              "allowEditTaxId": {
+                "type": "boolean"
+              },
+              "collectPhoneNumber": {
+                "type": "boolean"
+              }
+            }
+          },
+          "invoices": {
+            "type": "object",
+            "properties": {
+              "enabled": {
+                "type": "boolean"
+              },
+              "allowDownload": {
+                "type": "boolean"
+              },
+              "showHistory": {
+                "type": "boolean"
+              },
+              "showStatus": {
+                "type": "boolean"
+              }
+            }
+          },
+          "bgUrl": {
+            "type": "string"
+          },
+          "showBillyWatermark": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "userTier",
+          "primaryColor",
+          "bgColor",
+          "foreground",
+          "foregroundSecondary",
+          "border",
+          "shadowSize",
+          "card",
+          "shadowColor",
+          "borderRadius",
+          "borderWidth",
+          "fontFamily",
+          "textSize",
+          "subTextSize",
+          "headingTextSize",
+          "upgrade",
+          "downgrade",
+          "paymentMethod",
+          "customerData",
+          "invoices"
+        ]
+      },
+      "PublicCreateCouponDto": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "format": "uuid",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "stripeCouponId": {
+            "type": "string",
+            "example": "25OFF"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true,
+            "example": "25% Off Summer Sale"
+          },
+          "currency": {
+            "type": "string",
+            "nullable": true,
+            "example": "usd"
+          },
+          "amountOff": {
+            "type": "integer",
+            "minimum": 0,
+            "nullable": true,
+            "example": 1000
+          },
+          "percentOff": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100,
+            "nullable": true,
+            "example": 25
+          },
+          "duration": {
+            "type": "string",
+            "enum": [
+              "once",
+              "repeating",
+              "forever"
+            ],
+            "example": "repeating"
+          },
+          "durationInMonths": {
+            "type": "integer",
+            "minimum": 1,
+            "nullable": true,
+            "example": 3
+          },
+          "maxRedemptions": {
+            "type": "integer",
+            "minimum": 1,
+            "nullable": true,
+            "example": 100
+          },
+          "appliesTo": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "example": [
+              "prod_123"
+            ]
+          },
+          "currencyOptions": {
+            "type": "object",
+            "additionalProperties": {},
+            "nullable": true
+          },
+          "livemode": {
+            "default": false,
+            "type": "boolean"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "required": [
+          "projectId",
+          "name",
+          "currency",
+          "amountOff",
+          "percentOff",
+          "duration",
+          "durationInMonths",
+          "maxRedemptions"
+        ]
+      },
+      "PublicCreatePromoCodeDto": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "format": "uuid",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "couponId": {
+            "type": "string",
+            "format": "uuid",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "code": {
+            "type": "string",
+            "example": "SUMMER2024"
+          },
+          "active": {
+            "default": true,
+            "type": "boolean"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "maxRedemptions": {
+            "type": "integer",
+            "minimum": 1,
+            "nullable": true,
+            "example": 100
+          },
+          "firstTimeTransactionOnly": {
+            "default": false,
+            "type": "boolean"
+          },
+          "minimumAmount": {
+            "type": "integer",
+            "minimum": 0,
+            "nullable": true
+          },
+          "minimumAmountCurrency": {
+            "type": "string",
+            "nullable": true,
+            "example": "usd"
+          },
+          "currencyOptions": {
+            "type": "object",
+            "additionalProperties": {},
+            "nullable": true
+          },
+          "livemode": {
+            "default": false,
+            "type": "boolean"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "required": [
+          "projectId",
+          "couponId",
+          "code"
+        ]
+      },
+      "PublicSyncCouponDto": {
+        "type": "object",
+        "properties": {
+          "stripeId": {
+            "type": "string",
+            "description": "The Stripe ID of the coupon to synchronize.",
+            "example": "25OFF"
+          },
+          "projectId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The target project ID for the synchronization.",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "withPromoCodes": {
+            "default": false,
+            "type": "boolean",
+            "description": "Whether to also synchronize associated promotion codes.",
+            "example": true
+          }
+        },
+        "required": [
+          "stripeId",
+          "projectId"
+        ]
+      },
+      "PublicUpdateCouponDto": {
+        "type": "object",
+        "properties": {
+          "percentOff": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100,
+            "description": "New percentage off. Cannot be changed if amountOff is set.",
+            "example": 15
+          },
+          "amountOff": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "New amount off in smallest currency unit.",
+            "example": 500
+          },
+          "maxRedemptions": {
+            "type": "integer",
+            "minimum": 1,
+            "nullable": true,
+            "description": "Maximum number of times this coupon can be redeemed.",
+            "example": 200
+          },
+          "valid": {
+            "type": "boolean",
+            "description": "Whether the coupon is currently valid."
+          },
+          "status": {
+            "type": "string",
+            "description": "The coupon status.",
+            "example": "active"
+          }
+        }
+      },
+      "PublicUpdatePromoCodeDto": {
+        "type": "object",
+        "properties": {
+          "active": {
+            "type": "boolean",
+            "description": "Whether the promotion code is currently active.",
+            "example": false
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Date when the promotion code expires."
+          },
+          "maxRedemptions": {
+            "type": "integer",
+            "minimum": 1,
+            "nullable": true,
+            "description": "Maximum number of times this promotion code can be redeemed.",
+            "example": 50
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "nullable": true,
+            "description": "Set of key-value pairs for additional information.",
+            "example": {
+              "campaign": "summer_2026"
+            }
+          }
+        }
+      },
+      "PublicCreateInvoiceDto": {
+        "type": "object",
+        "properties": {
+          "customerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "subscriptionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "stripePaymentIntentId": {
+            "type": "string"
+          },
+          "issueDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "serviceDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "taxRate": {
+            "type": "number"
+          },
+          "taxLogicUsed": {
+            "type": "string"
+          },
+          "totalAmount": {
+            "type": "number"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "isReverseCharge": {
+            "type": "boolean"
+          },
+          "buyerSnapshot": {},
+          "periodStart": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "periodEnd": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "customerId",
+          "subscriptionId",
+          "projectId",
+          "issueDate",
+          "serviceDate",
+          "taxRate",
+          "taxLogicUsed",
+          "totalAmount",
+          "currency",
+          "type"
+        ],
+        "additionalProperties": false
+      },
+      "PublicCouponDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "expired"
+            ]
+          },
+          "currency": {
+            "type": "string",
+            "nullable": true
+          },
+          "amountOff": {
+            "type": "number",
+            "nullable": true
+          },
+          "percentOff": {
+            "type": "number",
+            "nullable": true
+          },
+          "currencyOptions": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "amountOff": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "amountOff"
+              ]
+            },
+            "nullable": true
+          },
+          "duration": {
+            "type": "string"
+          },
+          "durationInMonths": {
+            "type": "number",
+            "nullable": true
+          },
+          "maxRedemptions": {
+            "type": "number",
+            "nullable": true
+          },
+          "redemptionCount": {
+            "type": "number"
+          },
+          "valid": {
+            "type": "boolean"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "duration",
+          "redemptionCount",
+          "valid",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "PublicPromoCodeDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "couponId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "active",
+              "failed"
+            ]
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "maxRedemptions": {
+            "type": "number",
+            "nullable": true
+          },
+          "timesRedeemed": {
+            "type": "number"
+          },
+          "firstTimeTransactionOnly": {
+            "type": "boolean"
+          },
+          "minimumAmount": {
+            "type": "number",
+            "nullable": true
+          },
+          "minimumAmountCurrency": {
+            "type": "string",
+            "nullable": true
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "couponId",
+          "code",
+          "status",
+          "active",
+          "timesRedeemed",
+          "firstTimeTransactionOnly",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "PublicInvoiceDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "open",
+              "paid",
+              "uncollectible",
+              "void"
+            ]
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "subscription",
+              "credit_note",
+              "one_time",
+              "trial",
+              "past_due_recovery"
+            ]
+          },
+          "issueDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "dueDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "serviceDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "periodStart": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "periodEnd": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "paidAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "currency": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 3
+          },
+          "subTotalAmount": {
+            "type": "number"
+          },
+          "taxAmount": {
+            "type": "number"
+          },
+          "totalAmount": {
+            "type": "number"
+          },
+          "taxRate": {
+            "type": "number"
+          },
+          "fxRate": {
+            "type": "number",
+            "nullable": true
+          },
+          "vatAmountBaseCurrency": {
+            "type": "number",
+            "nullable": true
+          },
+          "isReverseCharge": {
+            "type": "boolean"
+          },
+          "seller": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "taxId": {
+                "type": "string",
+                "nullable": true
+              },
+              "address": {
+                "type": "object",
+                "properties": {
+                  "line1": {
+                    "type": "string"
+                  },
+                  "line2": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "city": {
+                    "type": "string"
+                  },
+                  "postalCode": {
+                    "type": "string"
+                  },
+                  "countryCode": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "line1",
+                  "line2",
+                  "city",
+                  "postalCode",
+                  "countryCode"
+                ]
+              },
+              "email": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "taxId",
+              "address",
+              "email"
+            ]
+          },
+          "buyer": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "taxId": {
+                "type": "string",
+                "nullable": true
+              },
+              "address": {
+                "type": "object",
+                "properties": {
+                  "line1": {
+                    "type": "string"
+                  },
+                  "line2": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "city": {
+                    "type": "string"
+                  },
+                  "postalCode": {
+                    "type": "string"
+                  },
+                  "countryCode": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "line1",
+                  "line2",
+                  "city",
+                  "postalCode",
+                  "countryCode"
+                ]
+              },
+              "email": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "taxId",
+              "address",
+              "email"
+            ]
+          },
+          "pdfUrl": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "status",
+          "type",
+          "issueDate",
+          "dueDate",
+          "serviceDate",
+          "currency",
+          "subTotalAmount",
+          "taxAmount",
+          "totalAmount",
+          "taxRate",
+          "isReverseCharge",
+          "seller",
+          "buyer",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "PublicPaymentMethodDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "customerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "acss_debit",
+              "affirm",
+              "afterpay_clearpay",
+              "alipay",
+              "alma",
+              "amazon_pay",
+              "au_becs_debit",
+              "bacs_debit",
+              "bancontact",
+              "billie",
+              "blik",
+              "boleto",
+              "card",
+              "card_present",
+              "cashapp",
+              "crypto",
+              "custom",
+              "customer_balance",
+              "eps",
+              "fpx",
+              "giropay",
+              "grabpay",
+              "ideal",
+              "interac_present",
+              "kakao_pay",
+              "klarna",
+              "konbini",
+              "kr_card",
+              "link",
+              "mb_way",
+              "mobilepay",
+              "multibanco",
+              "naver_pay",
+              "nz_bank_account",
+              "oxxo",
+              "p24",
+              "pay_by_bank",
+              "payco",
+              "paynow",
+              "paypal",
+              "payto",
+              "pix",
+              "promptpay",
+              "revolut_pay",
+              "samsung_pay",
+              "satispay",
+              "sepa_debit",
+              "sofort",
+              "swish",
+              "twint",
+              "us_bank_account",
+              "wechat_pay",
+              "zip"
+            ]
+          },
+          "last4": {
+            "type": "string"
+          },
+          "expiryMonth": {
+            "type": "number"
+          },
+          "expiryYear": {
+            "type": "number"
+          },
+          "isDefault": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "customerId",
+          "type",
+          "last4",
+          "expiryMonth",
+          "expiryYear",
+          "isDefault",
+          "createdAt"
+        ]
+      },
+      "PublicCreatePortalSessionDto": {
+        "type": "object",
+        "properties": {
+          "customerId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The ID of the customer to create a portal session for."
+          },
+          "projectId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The ID of the project."
+          }
+        },
+        "required": [
+          "customerId",
+          "projectId"
+        ]
+      },
+      "CreateSubscriptionDto": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "customerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "priceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "stripeSubscriptionId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "canceled",
+              "past_due",
+              "trialing",
+              "incomplete",
+              "paused",
+              "unpaid",
+              "pending",
+              "failed"
+            ]
+          },
+          "currentPeriodStart": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "currentPeriodEnd": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "default",
+              "enterprise"
+            ]
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "cancelAtPeriodEnd": {
+            "type": "boolean"
+          },
+          "trialEnd": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "canceledAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "quantity": {
+            "default": 1,
+            "type": "number"
+          }
+        },
+        "required": [
+          "projectId",
+          "customerId",
+          "priceId",
+          "status",
+          "currentPeriodStart",
+          "currentPeriodEnd",
+          "type",
+          "metadata",
+          "cancelAtPeriodEnd"
+        ],
+        "additionalProperties": false
+      },
+      "CreateEnterpriseSubscriptionDto": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "customerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "priceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "stripeSubscriptionId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "canceled",
+              "past_due",
+              "trialing",
+              "incomplete",
+              "paused",
+              "unpaid",
+              "pending",
+              "failed"
+            ]
+          },
+          "currentPeriodStart": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "currentPeriodEnd": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "quantity": {
+            "default": 1,
+            "type": "number"
+          },
+          "cancelAtPeriodEnd": {
+            "type": "boolean"
+          },
+          "customAmount": {
+            "type": "number"
+          },
+          "trialEnd": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "projectId",
+          "customerId",
+          "priceId",
+          "status",
+          "currentPeriodStart",
+          "currentPeriodEnd",
+          "cancelAtPeriodEnd"
+        ],
+        "additionalProperties": false
+      },
+      "UpdateSubscriptionDto": {
+        "type": "object",
+        "properties": {
+          "priceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "canceled",
+              "past_due",
+              "trialing",
+              "incomplete",
+              "paused",
+              "unpaid",
+              "pending",
+              "failed"
+            ]
+          },
+          "currentPeriodStart": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "currentPeriodEnd": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "cancelAtPeriodEnd": {
+            "type": "boolean"
+          },
+          "trialEnd": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "canceledAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "quantity": {
+            "type": "number"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateEnterpriseSubscriptionDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Current status of the subscription",
+            "enum": [
+              "active",
+              "canceled",
+              "past_due",
+              "trialing",
+              "incomplete",
+              "paused",
+              "unpaid",
+              "pending",
+              "failed"
+            ]
+          },
+          "currentPeriodStart": {
+            "type": "string",
+            "description": "The start date of the current period",
+            "format": "date-time"
+          },
+          "currentPeriodEnd": {
+            "type": "string",
+            "description": "The end date of the current period",
+            "format": "date-time"
+          },
+          "cancelAtPeriodEnd": {
+            "type": "boolean",
+            "description": "Whether to cancel the subscription at the end of the current period",
+            "example": false
+          },
+          "trialEnd": {
+            "type": "string",
+            "description": "The trial end date",
+            "format": "date-time"
+          },
+          "quantity": {
+            "type": "number",
+            "description": "The quantity of the subscription (e.g. number of seats)",
+            "example": 10
+          },
+          "customAmount": {
+            "type": "number",
+            "description": "The custom amount for enterprise (in cents)",
+            "example": 500000
+          },
+          "isEnterprise": {
+            "type": "boolean",
+            "description": "Is this an enterprise subscription",
+            "example": true
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Metadata for the subscription",
+            "additionalProperties": true
+          }
+        }
+      },
+      "CreateSubscriptionAuroraDto": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "customerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "priceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "stripeSubscriptionId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "canceled",
+              "past_due",
+              "trialing",
+              "incomplete",
+              "paused",
+              "unpaid",
+              "pending",
+              "failed"
+            ]
+          },
+          "currentPeriodStart": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "currentPeriodEnd": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "default",
+              "enterprise"
+            ]
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "cancelAtPeriodEnd": {
+            "type": "boolean"
+          },
+          "trialEnd": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "canceledAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "quantity": {
+            "default": 1,
+            "type": "number"
+          }
+        },
+        "required": [
+          "projectId",
+          "customerId",
+          "priceId",
+          "status",
+          "currentPeriodStart",
+          "currentPeriodEnd",
+          "type",
+          "metadata",
+          "cancelAtPeriodEnd"
+        ],
+        "additionalProperties": false
+      },
+      "UpdateSubscriptionAuroraDto": {
+        "type": "object",
+        "properties": {
+          "priceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "canceled",
+              "past_due",
+              "trialing",
+              "incomplete",
+              "paused",
+              "unpaid",
+              "pending",
+              "failed"
+            ]
+          },
+          "currentPeriodStart": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "currentPeriodEnd": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "cancelAtPeriodEnd": {
+            "type": "boolean"
+          },
+          "trialEnd": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "canceledAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "quantity": {
+            "type": "number"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetSubscriptionsAuroraDto": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "description": "Number of items per page",
+            "example": 10
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Number of items to skip",
+            "example": 0
+          },
+          "cursor": {
+            "type": "string",
+            "description": "Cursor for cursor-based pagination"
+          },
+          "orderBy": {
+            "type": "string",
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "description": "Order of sorting",
+            "example": "asc"
+          },
+          "orderByField": {
+            "type": "string",
+            "description": "Field to sort by",
+            "example": "createdAt"
+          },
+          "priceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "cancelAtPeriodEnd": {
+            "type": "boolean"
+          },
+          "isEnterprise": {
+            "type": "boolean"
+          },
+          "isTrial": {
+            "type": "boolean"
+          },
+          "search": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "title": "GetSubscriptions",
+        "description": "Schema for listing subscriptions with filters"
+      },
+      "UpdateEnterpriseSubscriptionAuroraDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Current status of the subscription",
+            "enum": [
+              "active",
+              "canceled",
+              "past_due",
+              "trialing",
+              "incomplete",
+              "paused",
+              "unpaid",
+              "pending",
+              "failed"
+            ]
+          },
+          "currentPeriodStart": {
+            "type": "string",
+            "description": "The start date of the current period",
+            "format": "date-time"
+          },
+          "currentPeriodEnd": {
+            "type": "string",
+            "description": "The end date of the current period",
+            "format": "date-time"
+          },
+          "cancelAtPeriodEnd": {
+            "type": "boolean",
+            "description": "Whether to cancel the subscription at the end of the current period",
+            "example": false
+          },
+          "trialEnd": {
+            "type": "string",
+            "description": "The trial end date",
+            "format": "date-time"
+          },
+          "quantity": {
+            "type": "number",
+            "description": "The quantity of the subscription (e.g. number of seats)",
+            "example": 10
+          },
+          "customAmount": {
+            "type": "number",
+            "description": "The custom amount for enterprise (in cents)",
+            "example": 500000
+          },
+          "isEnterprise": {
+            "type": "boolean",
+            "description": "Is this an enterprise subscription",
+            "example": true
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Metadata for the subscription",
+            "additionalProperties": true
+          }
+        }
+      },
+      "GetSeatsAuroraDto": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "description": "Number of items per page",
+            "example": 10
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Number of items to skip",
+            "example": 0
+          },
+          "cursor": {
+            "type": "string",
+            "description": "Cursor for cursor-based pagination"
+          },
+          "orderBy": {
+            "type": "string",
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "description": "Order of sorting",
+            "example": "asc"
+          },
+          "orderByField": {
+            "type": "string",
+            "description": "Field to sort by",
+            "example": "createdAt"
+          },
+          "status": {
+            "type": "string"
+          },
+          "search": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "title": "GetSeats",
+        "description": "Schema for listing subscription seats with filters"
+      },
+      "CreateEnterpriseSubscriptionAuroraDto": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "customerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "priceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "stripeSubscriptionId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "canceled",
+              "past_due",
+              "trialing",
+              "incomplete",
+              "paused",
+              "unpaid",
+              "pending",
+              "failed"
+            ]
+          },
+          "currentPeriodStart": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "currentPeriodEnd": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "quantity": {
+            "default": 1,
+            "type": "number"
+          },
+          "cancelAtPeriodEnd": {
+            "type": "boolean"
+          },
+          "customAmount": {
+            "type": "number"
+          },
+          "trialEnd": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "projectId",
+          "customerId",
+          "priceId",
+          "status",
+          "currentPeriodStart",
+          "currentPeriodEnd",
+          "cancelAtPeriodEnd"
+        ],
+        "additionalProperties": false
+      },
+      "UpgradeSubscriptionAuroraDto": {
+        "type": "object",
+        "properties": {
+          "priceId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "priceId"
+        ]
+      },
+      "CreateInboundWebhookDto": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": {
+            "type": "string"
+          },
+          "status": {
+            "default": "active",
+            "type": "string",
+            "enum": [
+              "active",
+              "disabled"
+            ]
+          }
+        },
+        "required": [
+          "projectId"
+        ],
+        "additionalProperties": false
+      },
+      "UpdateInboundWebhookDto": {
+        "type": "object",
+        "properties": {
+          "stripeWebhookId": {
+            "type": "string"
+          },
+          "stripeWebhookSecret": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "description": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "disabled"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateOutboundWebhookDto": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "name": {
+            "type": "string"
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": {
+            "type": "string"
+          },
+          "livemode": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "projectId",
+          "url",
+          "name",
+          "events"
+        ],
+        "additionalProperties": false
+      },
+      "CreateCustomerDto": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 100
+          },
+          "stripeCustomerId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "externalUserId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "isEnterprise": {
+            "default": false,
+            "type": "boolean"
+          },
+          "address": {
+            "type": "object",
+            "properties": {
+              "city": {
+                "type": "string"
+              },
+              "country": {
+                "type": "string"
+              },
+              "line1": {
+                "type": "string"
+              },
+              "line2": {
+                "type": "string"
+              },
+              "postalCode": {
+                "type": "string"
+              },
+              "state": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "city",
+              "country",
+              "line1",
+              "postalCode"
+            ]
+          },
+          "businessName": {
+            "type": "string"
+          },
+          "reconciliationMode": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "invoicePrefix": {
+            "type": "string"
+          },
+          "isOwner": {
+            "type": "boolean"
+          },
+          "ownerCustomerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "invoiceCustomFields": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "value"
+              ]
+            }
+          },
+          "taxIdData": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "type",
+                "value"
+              ]
+            }
+          },
+          "preferredLocales": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sync": {
+            "default": true,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "projectId",
+          "email",
+          "name",
+          "externalUserId"
+        ],
+        "title": "CreateCustomer",
+        "description": "Schema for creating a new customer"
+      },
+      "UpdateCustomerDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 100
+          },
+          "stripeCustomerId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "externalUserId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "address": {
+            "type": "object",
+            "properties": {
+              "city": {
+                "type": "string"
+              },
+              "country": {
+                "type": "string"
+              },
+              "line1": {
+                "type": "string"
+              },
+              "line2": {
+                "type": "string"
+              },
+              "postalCode": {
+                "type": "string"
+              },
+              "state": {
+                "type": "string"
+              }
+            }
+          },
+          "businessName": {
+            "type": "string"
+          },
+          "reconciliationMode": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "invoicePrefix": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "invoiceCustomFields": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "value"
+              ]
+            }
+          },
+          "taxIdData": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "type",
+                "value"
+              ]
+            }
+          },
+          "preferredLocales": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "title": "UpdateCustomer",
+        "description": "Schema for updating a customer"
+      },
+      "BanCustomerDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "GetCustomersDto": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "description": "Number of items per page",
+            "example": 10
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Number of items to skip",
+            "example": 0
+          },
+          "cursor": {
+            "type": "string",
+            "description": "Cursor for cursor-based pagination"
+          },
+          "orderBy": {
+            "type": "string",
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "description": "Order of sorting",
+            "example": "asc"
+          },
+          "orderByField": {
+            "type": "string",
+            "description": "Field to sort by",
+            "example": "createdAt"
+          },
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "email": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "externalUserId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "projectId"
+        ],
+        "additionalProperties": false,
+        "title": "GetCustomers",
+        "description": "Schema for listing customers with filters"
+      },
+      "AddTokensDto": {
+        "type": "object",
+        "properties": {
+          "customerId": {
+            "type": "string",
+            "format": "uuid",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "amount": {
+            "type": "number",
+            "minimum": 0.01,
+            "example": 100
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "example": "Manual credit"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {},
+            "example": {
+              "source": "support_ticket"
+            }
+          }
+        },
+        "required": [
+          "customerId",
+          "amount",
+          "reason"
+        ]
+      },
+      "UpdateTokensAuroraDto": {
+        "type": "object",
+        "properties": {
+          "customerId": {
+            "type": "string",
+            "format": "uuid",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "amount": {
+            "type": "number",
+            "minimum": 0.01,
+            "example": 100
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "example": "Manual credit"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": {},
+            "example": {
+              "source": "support_ticket"
+            }
+          }
+        },
+        "required": [
+          "customerId",
+          "amount",
+          "reason"
+        ]
+      },
+      "PublicAlertDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "customerId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "payment_failed",
+              "paid",
+              "payment_action_required",
+              "subscription_canceled",
+              "subscription_past_due",
+              "subscription_trial_will_end",
+              "subscription_paused",
+              "subscription_renewed",
+              "subscription_upgraded",
+              "subscription_downgraded",
+              "subscription_reactivated",
+              "charge_dispute_created",
+              "low_tokens",
+              "invoice_upcoming",
+              "tokens_expired",
+              "checkout_session_expired",
+              "checkout_session_completed",
+              "dispute_created",
+              "customer_deleted"
+            ]
+          },
+          "read": {
+            "type": "boolean"
+          },
+          "payload": {
+            "type": "object",
+            "additionalProperties": {},
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "projectId",
+          "type",
+          "read",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "CreateCheckoutDto": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The internal ID of the project",
+            "example": "proj_123"
+          },
+          "priceId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The internal ID of the price",
+            "example": "price_123"
+          },
+          "userId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The internal ID of the price",
+            "example": "price_123"
+          },
+          "externalUserId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Simulates a user ID from the developer's application",
+            "example": "user_123"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Email address for the Stripe customer",
+            "example": "customer@example.com"
+          },
+          "successUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL to redirect to after successful payment",
+            "example": "http://localhost:3000/success",
+            "default": "http://localhost:3000/success"
+          },
+          "cancelUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL to redirect to if payment is cancelled",
+            "example": "http://localhost:3000/cancel",
+            "default": "http://localhost:3000/cancel"
+          }
+        },
+        "required": [
+          "projectId",
+          "priceId",
+          "userId",
+          "externalUserId",
+          "email"
+        ],
+        "additionalProperties": false,
+        "title": "CreateCheckoutDto",
+        "description": "Configuration for creating a Stripe Checkout session"
+      }
+    }
+  }
+}

@@ -1,0 +1,53 @@
+---
+title: "TypeScript SDK"
+description: "Deep dive into the @billy/sdk."
+icon: "brands node-js"
+---
+
+# TypeScript SDK
+
+The official `@billy/sdk` is the fastest way to integrate Billy into your Node.js or edge environments. It provides full type-safety, automatic retries, and comprehensive error mapping.
+
+## Installation
+
+```bash
+npm install @billy/sdk
+```
+
+## Initialization
+
+Initialize the client with your secret API key.
+
+```typescript
+import { Billy } from '@billy/sdk';
+
+const billy = new Billy(process.env.BILLY_API_KEY, {
+  maxRetries: 3, // Automatically retry 429 and 5xx errors
+  timeout: 10000 // 10 second timeout
+});
+```
+
+## Namespaces
+
+The SDK maps identically to the API Reference domains. All methods return Promises.
+
+- `billy.projects.*`
+- `billy.customers.*`
+- `billy.subscriptions.*`
+- `billy.prices.*`
+- `billy.tokens.*`
+- `billy.invoices.*`
+- `billy.portal.*`
+- `billy.alerts.*`
+
+## Type Definitions
+
+The SDK exports all TypeScript interfaces used by the API, so you don't have to define your own types for Webhook payloads or API responses.
+
+```typescript
+import type { Customer, Subscription, TokenLedger } from '@billy/sdk';
+
+function renderCustomerProfile(customer: Customer, sub: Subscription) {
+  // Types are strictly enforced
+}
+```

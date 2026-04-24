@@ -1,0 +1,10 @@
+---
+openapi: "DELETE /api/billing/invoices/{id}"
+---
+
+Hard delete an invoice.
+
+<Warning>
+  Only invoices in the `draft` state can be hard deleted. Once finalized, an invoice must be voided instead.
+</Warning>
+

@@ -1,0 +1,10 @@
+---
+openapi: "PATCH /api/billing/invoices/{id}/void"
+---
+
+Void an open invoice, canceling the demand for payment.
+
+<Note>
+  Voiding is irreversible. The invoice transitions to the `void` status and is removed from accounts receivable calculations.
+</Note>
+

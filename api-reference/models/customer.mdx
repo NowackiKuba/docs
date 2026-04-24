@@ -1,0 +1,73 @@
+---
+title: "Customer Object"
+description: "The Customer object represents an end-user or business that purchases subscriptions or uses tokens."
+icon: "user"
+---
+
+# Customer Object
+
+The `Customer` object is central to the Billy platform. It links external users from your application to Stripe billing records, token ledgers, and subscriptions.
+
+<ResponseField name="id" type="string" required>
+  The unique identifier for the customer (UUID format).
+</ResponseField>
+
+<ResponseField name="projectId" type="string" required>
+  The ID of the project this customer belongs to.
+</ResponseField>
+
+<ResponseField name="externalUserId" type="string">
+  Your application's internal identifier for this user (e.g., a database ID or Auth0 sub). Used to look up the user across your system.
+</ResponseField>
+
+<ResponseField name="email" type="string" required>
+  The customer's email address. Used for invoicing, portal magic links, and dunning notifications.
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  The customer's full name or business name.
+</ResponseField>
+
+<ResponseField name="stripeCustomerId" type="string">
+  The corresponding `cus_` ID mapped to your connected Stripe account.
+</ResponseField>
+
+<ResponseField name="isEnterprise" type="boolean" default="false">
+  Indicates whether the customer is managed under an enterprise contract, bypassing standard checkout limitations.
+</ResponseField>
+
+<ResponseField name="address" type="object">
+  <Expandable title="properties">
+    <ResponseField name="line1" type="string">Address line 1 (e.g., street, PO Box).</ResponseField>
+    <ResponseField name="line2" type="string">Address line 2 (e.g., apartment, suite, unit).</ResponseField>
+    <ResponseField name="city" type="string">City, district, suburb, town, or village.</ResponseField>
+    <ResponseField name="state" type="string">State, county, province, or region.</ResponseField>
+    <ResponseField name="postalCode" type="string">ZIP or postal code.</ResponseField>
+    <ResponseField name="country" type="string">Two-letter country code (ISO 3166-1 alpha-2).</ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="metadata" type="object">
+  Key-value pairs for storing arbitrary application state linked to the customer. Max 50 keys.
+</ResponseField>
+
+<ResponseField name="status" type="string" default="active">
+  The operational status of the customer. Can be `active` or `banned`.
+</ResponseField>
+
+<ResponseField name="createdAt" type="string (ISO 8601)">
+  Timestamp when the customer was created.
+</ResponseField>
+
+<ResponseField name="updatedAt" type="string (ISO 8601)">
+  Timestamp when the customer was last updated.
+</ResponseField>
+
+<ResponseField name="deletedAt" type="string (ISO 8601) | null">
+  Timestamp when the customer was soft-deleted. Null if the customer is active.
+</ResponseField>
+
+## Lifecycle behaviors
+
+- **Deletion**: Deleting a customer strictly soft-deletes the record, protecting historical invoices and ledgers.
+- **Enterprise flag**: Setting `isEnterprise` unlocks manual invoicing without active payment methods and bypasses strict dunning locks.

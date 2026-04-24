@@ -1,0 +1,33 @@
+---
+title: "Testing Webhooks Locally"
+description: "Forwarding Stripe events to your localhost environment."
+icon: "laptop-code"
+---
+
+# Testing Webhooks Locally
+
+To test your Billy webhook handlers during development, you need to route Stripe events from the cloud to your local machine (e.g., `http://localhost:3000`).
+
+## Using the Stripe CLI
+
+The official [Stripe CLI](https://stripe.com/docs/stripe-cli) is the recommended tool for local webhook testing.
+
+1. **Install and Login:**
+   ```bash
+   stripe login
+   ```
+2. **Forward Events:**
+   Forward events from your Stripe Test account to your local Billy webhook endpoint.
+   ```bash
+   stripe listen --forward-to localhost:3000/api/webhooks/billy
+   ```
+3. **Capture the Secret:**
+   The CLI will output a webhook signing secret (starts with `whsec_`). Copy this value and set it in your local `.env` file as `STRIPE_WEBHOOK_SECRET`.
+4. **Trigger Events:**
+   In a separate terminal, use the CLI to trigger simulated events:
+   ```bash
+   stripe trigger customer.subscription.created
+   stripe trigger invoice.payment_failed
+   ```
+
+Your local Next.js or Node.js server will now receive and process the events via the `@billy/sdk` handler, allowing you to test your email triggers and database updates safely.

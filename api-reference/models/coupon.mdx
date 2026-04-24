@@ -1,0 +1,72 @@
+---
+title: "Coupon Object"
+description: "The Coupon object represents a discount rule that can be applied to subscriptions or invoices."
+icon: "tag"
+---
+
+# Coupon Object
+
+Coupons define the logic of a discount — whether it's a flat amount off or a percentage off, and how long the discount lasts. They can be applied directly to a customer or distributed via Promotion Codes.
+
+<ResponseField name="id" type="string" required>
+  The unique internal identifier for the coupon.
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  The human-readable name of the coupon (e.g., `Black Friday 50% Off`). This is visible to customers on invoices and in the portal.
+</ResponseField>
+
+<ResponseField name="status" type="string" required>
+  The operational state of the coupon.
+  <Expandable title="Allowed values">
+    - `active`: Can be redeemed by new customers.
+    - `expired`: Either soft-deleted or reached its `maxRedemptions` limit. No longer valid for new redemptions.
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="percentOff" type="number">
+  The percentage to discount from the invoice subtotal (e.g., `25.5` for 25.5%). Mutually exclusive with `amountOff`.
+</ResponseField>
+
+<ResponseField name="amountOff" type="number">
+  A fixed amount to discount (in the smallest currency unit). Mutually exclusive with `percentOff`.
+</ResponseField>
+
+<ResponseField name="currency" type="string">
+  The 3-letter ISO currency code. Required if `amountOff` is provided.
+</ResponseField>
+
+<ResponseField name="duration" type="string" required>
+  How long the discount remains in effect once applied to a customer.
+  <Expandable title="Allowed values">
+    - `once`: Applies to the very first invoice only.
+    - `repeating`: Applies to all invoices for the next `durationInMonths` months.
+    - `forever`: Applies to all future invoices indefinitely.
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="durationInMonths" type="number">
+  The number of months the discount applies. Required if `duration` is `repeating`.
+</ResponseField>
+
+<ResponseField name="maxRedemptions" type="integer">
+  The maximum number of times this coupon can be redeemed across all customers.
+</ResponseField>
+
+<ResponseField name="timesRedeemed" type="integer" default="0">
+  The number of times the coupon has been successfully applied to a customer or subscription.
+</ResponseField>
+
+<ResponseField name="stripeCouponId" type="string">
+  The corresponding Stripe `co_` ID.
+</ResponseField>
+
+<ResponseField name="createdAt" type="string (ISO 8601)">
+  Timestamp when the coupon was created.
+</ResponseField>
+
+## Promotion Codes
+
+A Coupon dictates the *rules* of the discount. A **Promotion Code** is the actual string (e.g., `SAVE20`) that a user enters during checkout.
+
+Multiple promotion codes can be linked to a single coupon. For example, you might create a coupon `20% Off Forever` and generate two promotion codes: `TWITTER20` and `NEWSLETTER20` to track campaign performance, both mapping to the exact same discount logic.

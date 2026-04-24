@@ -1,0 +1,109 @@
+---
+title: 'Subscriptions'
+description: 'Create and manage subscriptions, handle upgrades and downgrades with correct proration, and understand the enterprise model.'
+icon: 'repeat'
+---
+
+# Subscriptions
+
+Billy exposes two distinct flows for subscription management: the **enterprise flow** for server-side provisioning, and the **standard flow** for self-service billing portals.
+
+## Enterprise subscriptions
+
+Use `POST /api/subscriptions/enterprise` to programmatically create a subscription on behalf of a customer. This endpoint is designed for scenarios where your team or sales process provisions access directly — not through a self-service checkout.
+
+```bash
+curl -X POST https://api.usebilly.dev/api/subscriptions/enterprise \
+  -H "Authorization: API Key <your_api_key>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "customerId": "cus_abc123",
+    "priceId": "price_xyz789",
+    "seats": 10,
+    "tokenAllocation": 50000
+  }'
+```
+
+<Note>
+  The enterprise endpoint bypasses the Stripe checkout flow entirely. Payment method collection must be handled separately (for example, through the billing portal or a Stripe setup intent).
+</Note>
+
+## Upgrades
+
+When a customer moves to a higher-tier plan mid-cycle, Billy calculates proration using `create_prorations` behavior. The customer is immediately moved to the new plan and billed for the difference.
+
+```bash
+curl -X PATCH https://api.usebilly.dev/api/subscriptions/{id}/upgrade \
+  -H "Authorization: API Key <your_api_key>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "newPriceId": "price_pro_monthly"
+  }'
+```
+
+<Tip>
+  Configure the default upgrade proration behavior project-wide under `PATCH /api/projects/{id}/settings` using the `upgradeProration` field. Options are `create_prorations`, `always_invoice`, and `none`.
+</Tip>
+
+## Downgrades
+
+Downgrades apply the new (lower) price at the end of the current billing period by default, using `none` proration behavior to avoid issuing credits mid-cycle.
+
+```bash
+curl -X PATCH https://api.usebilly.dev/api/subscriptions/{id}/downgrade \
+  -H "Authorization: API Key <your_api_key>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "newPriceId": "price_starter_monthly"
+  }'
+```
+
+<Warning>
+  A downgrade does **not** immediately change the customer's access level. The price change takes effect at the next billing cycle boundary. Plan your access-control logic accordingly.
+</Warning>
+
+## Seat management
+
+For per-seat pricing, retrieve the current seat roster to display team member status and audit allocation.
+
+```bash
+curl https://api.usebilly.dev/api/subscriptions/{id}/seats \
+  -H "Authorization: API Key <your_api_key>"
+```
+
+Update the seat count or enterprise configuration with `PATCH /api/subscriptions/{id}/enterprise`.
+
+## Cancellation and soft deletes
+
+Calling `DELETE /api/subscriptions/{id}` marks the subscription as canceled. Billy applies a **soft delete** pattern — records are never physically removed from the database. The `deletedAt` timestamp is set, and the subscription is excluded from active queries but remains available for audit and MRR calculations.
+
+<Note>
+  Draft invoices are the only exception to the soft-delete rule. Because they have no financial impact, they are hard-deleted to reduce storage overhead.
+</Note>
+
+## Subscription lifecycle states
+
+| State | Description |
+|-------|-------------|
+| `active` | Subscription is current and the customer has access. |
+| `past_due` | Payment failed. Billy triggers dunning retries per project settings. |
+| `canceled` | Subscription has been canceled (soft-deleted). |
+| `trialing` | Customer is within a free trial period defined by `trialDays`. |
+| `paused` | Subscription has been paused and billing is suspended. |
+
+## Related endpoints
+
+<CardGroup cols={2}>
+  <Card title="Create enterprise subscription" icon="plus" href="/api-reference">
+    `POST /api/subscriptions/enterprise`
+  </Card>
+  <Card title="Upgrade subscription" icon="arrow-up" href="/api-reference">
+    `PATCH /api/subscriptions/{id}/upgrade`
+  </Card>
+  <Card title="Downgrade subscription" icon="arrow-down" href="/api-reference">
+    `PATCH /api/subscriptions/{id}/downgrade`
+  </Card>
+  <Card title="Get seats" icon="users" href="/api-reference">
+    `GET /api/subscriptions/{id}/seats`
+  </Card>
+</CardGroup>

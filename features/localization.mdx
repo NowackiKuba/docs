@@ -1,0 +1,25 @@
+---
+title: "Localization & Currencies"
+description: "Supporting multiple currencies and portal languages."
+icon: "globe"
+---
+
+# Localization & Currencies
+
+Billy is built for global reach, supporting multi-currency setups and localized customer portals.
+
+## Currency Configuration
+
+Every project has a `defaultCurrency` (e.g., `usd`, `eur`). This currency is automatically applied to new customers and manual invoices if no currency is explicitly provided.
+
+If your SaaS operates in multiple markets, you can create Prices in different currencies for the same Product.
+
+<Note>
+**Stripe Constraint:** A single Customer object in Stripe is permanently locked to the currency of their very first invoice. If a European customer pays their first invoice in `eur`, you cannot assign a `usd` subscription to them later. Billy enforces this constraint at the API layer.
+</Note>
+
+## Customer Portal Localization
+
+When you generate a Magic Link to the Stripe Customer Portal via `POST /api/portal/sessions`, the portal automatically localizes its language and formatting based on the customer's browser `Accept-Language` headers.
+
+You do not need to pass an explicit `locale` parameter; the system optimizes the UX for the user automatically.

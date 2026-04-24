@@ -1,0 +1,86 @@
+---
+title: "Subscription Object"
+description: "The Subscription object represents an active, recurring billing agreement between a Customer and a Pricing Plan."
+icon: "repeat"
+---
+
+# Subscription Object
+
+Subscriptions encapsulate the recurring billing state, seat limits, enterprise allocations, and connection to Stripe's subscription engine.
+
+<ResponseField name="id" type="string" required>
+  The unique identifier for the subscription.
+</ResponseField>
+
+<ResponseField name="customerId" type="string" required>
+  The ID of the customer who owns this subscription.
+</ResponseField>
+
+<ResponseField name="priceId" type="string" required>
+  The ID of the active Price (plan) the subscription is currently billed against.
+</ResponseField>
+
+<ResponseField name="stripeSubscriptionId" type="string" required>
+  The underlying Stripe `sub_` ID.
+</ResponseField>
+
+<ResponseField name="status" type="string" required>
+  The state of the subscription.
+  <Expandable title="Allowed values">
+    - `active`: Subscription is current and paid.
+    - `past_due`: The last invoice failed, currently in dunning.
+    - `unpaid`: Dunning failed, service should be suspended.
+    - `canceled`: Subscription has been canceled.
+    - `incomplete`: Awaiting initial payment or 3D Secure authentication.
+    - `incomplete_expired`: Initial payment window expired.
+    - `trialing`: Subscription is currently in a free trial.
+    - `paused`: Subscription billing is temporarily halted.
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="isEnterprise" type="boolean" default="false">
+  If true, the subscription was created via the enterprise provisioning endpoints and may have custom seat or token overrides.
+</ResponseField>
+
+<ResponseField name="seats" type="integer">
+  The number of allocated seats for per-seat billing models. Null for flat-rate or pure usage-based plans.
+</ResponseField>
+
+<ResponseField name="tokenAllocation" type="integer">
+  A fixed number of tokens granted each billing cycle for this specific subscription, overriding the Price default. (Enterprise only)
+</ResponseField>
+
+<ResponseField name="cancelAtPeriodEnd" type="boolean" default="false">
+  If true, the subscription will remain active until `currentPeriodEnd` and then transition to `canceled`.
+</ResponseField>
+
+<ResponseField name="currentPeriodStart" type="string (ISO 8601)">
+  The start timestamp of the current billing cycle.
+</ResponseField>
+
+<ResponseField name="currentPeriodEnd" type="string (ISO 8601)">
+  The end timestamp of the current billing cycle.
+</ResponseField>
+
+<ResponseField name="trialStart" type="string (ISO 8601) | null">
+  The start timestamp of the trial period, if applicable.
+</ResponseField>
+
+<ResponseField name="trialEnd" type="string (ISO 8601) | null">
+  The end timestamp of the trial period. When reached, the subscription transitions to `active` and generates an invoice.
+</ResponseField>
+
+<ResponseField name="createdAt" type="string (ISO 8601)">
+  Timestamp of creation.
+</ResponseField>
+
+<ResponseField name="updatedAt" type="string (ISO 8601)">
+  Timestamp of the last modification.
+</ResponseField>
+
+<ResponseField name="deletedAt" type="string (ISO 8601) | null">
+  Timestamp of soft-deletion.
+</ResponseField>
+
+## Architecture notes
+Billy abstracts the complexity of Stripe's `items` array. Every Billy subscription enforces a single base plan (`priceId`). Add-ons and usage are handled via Token metering or manual invoices.

@@ -1,0 +1,58 @@
+---
+title: "Token Ledger Object"
+description: "The Token Ledger object represents the historical log of all usage token mutations."
+icon: "coins"
+---
+
+# Token Ledger Object
+
+Billy uses a ledger-based architecture for usage metering. Instead of directly updating a balance integer, every action (granting, deducting, or freezing tokens) creates an immutable ledger entry. The current balance is derived by summing the ledger entries.
+
+<ResponseField name="id" type="string" required>
+  The unique identifier for the ledger entry.
+</ResponseField>
+
+<ResponseField name="customerId" type="string" required>
+  The ID of the customer whose balance was mutated.
+</ResponseField>
+
+<ResponseField name="projectId" type="string" required>
+  The ID of the project the customer belongs to.
+</ResponseField>
+
+<ResponseField name="type" type="string" required>
+  The nature of the transaction.
+  <Expandable title="Allowed values">
+    - `add`: Tokens were granted to the customer (positive amount).
+    - `deduct`: Tokens were permanently consumed (negative amount).
+    - `freeze`: Tokens were temporarily reserved for an ongoing operation.
+    - `unfreeze`: Previously reserved tokens were released back to the available pool.
+    - `expire`: Tokens expired according to the project's expiration rules.
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="amount" type="integer" required>
+  The number of tokens involved in the transaction. Positive for `add` and `unfreeze`, negative for `deduct`, `freeze`, and `expire`.
+</ResponseField>
+
+<ResponseField name="description" type="string">
+  A human-readable explanation of the transaction (e.g., `GPT-4 completion - 1,200 output tokens`). Excellent for exposing a usage audit log to your customers.
+</ResponseField>
+
+<ResponseField name="metadata" type="object">
+  Arbitrary key-value pairs associated with the transaction, useful for linking back to internal system IDs or feature flags.
+</ResponseField>
+
+<ResponseField name="createdAt" type="string (ISO 8601)">
+  Timestamp when the ledger entry was recorded.
+</ResponseField>
+
+## Current Balance
+
+The current balance at any given moment is calculated using the following formula:
+
+- **Total Balance** = Sum of all `add`, `deduct`, and `expire` entries.
+- **Frozen Balance** = Sum of all `freeze` and `unfreeze` entries.
+- **Available Balance** = `Total Balance` - `Frozen Balance`.
+
+Because the ledger is immutable, you can easily query a customer's balance exactly as it was at a specific point in time by filtering the `createdAt` timestamps.

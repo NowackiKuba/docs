@@ -1,122 +1,190 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
-  "name": "Mint Starter Kit",
-  "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+  "name": "Billy",
+  "logo": {
+    "dark": "/logo/billy-png-logo.png",
+    "light": "/logo/billy-png-logo.png"
   },
   "favicon": "/favicon.svg",
+  "theme": "mint",
+  "colors": {
+    "primary": "#4F46E5",
+    "light": "#4F46E5",
+    "dark": "#4F46E5"
+  },
+  "api": {
+    "openapi": ["openapi.json"]
+  },
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Documentation",
         "groups": [
           {
             "group": "Getting started",
-            "pages": [
-              "index",
-              "quickstart",
-              "development"
-            ]
+            "pages": ["introduction", "quickstart"]
           },
           {
-            "group": "Customization",
-            "pages": [
-              "essentials/settings",
-              "essentials/navigation"
-            ]
+            "group": "Architecture",
+            "pages": ["architecture/authentication", "architecture/environments", "architecture/errors", "architecture/pagination"]
           },
           {
-            "group": "Writing content",
-            "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
-            ]
+            "group": "Core concepts",
+            "pages": ["guides/subscriptions", "guides/tokens", "guides/webhooks", "guides/invoices", "guides/coupons", "guides/portal"]
           },
           {
-            "group": "AI tools",
-            "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
-            ]
+            "group": "Billing logic",
+            "pages": ["billing-logic/soft-deletes", "billing-logic/dunning", "billing-logic/sca"]
+          },
+          {
+            "group": "SDK & Frameworks",
+            "pages": ["sdk/typescript", "sdk/nextjs"]
+          },
+          {
+            "group": "Security & Compliance",
+            "pages": ["security/data-privacy", "security/pci-compliance", "security/rate-limiting"]
+          },
+          {
+            "group": "Advanced Workflows",
+            "pages": ["workflows/b2b-saas", "workflows/usage-based-billing", "workflows/migration"]
+          },
+          {
+            "group": "Events & Webhooks",
+            "pages": ["events/idempotency", "events/testing-webhooks"]
+          },
+          {
+            "group": "Platform Features",
+            "pages": ["features/taxes", "features/localization"]
           }
         ]
       },
       {
-        "tab": "API reference",
+        "tab": "API Reference",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "Overview",
+            "pages": ["api-reference", "api-reference/introduction"]
+          },
+          {
+            "group": "Core Objects",
             "pages": [
-              "api-reference/introduction"
+              "api-reference/models/project",
+              "api-reference/models/customer",
+              "api-reference/models/subscription",
+              "api-reference/models/invoice",
+              "api-reference/models/coupon",
+              "api-reference/models/token"
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "Projects",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "api-reference/endpoints/projects/get-my-projects",
+              "api-reference/endpoints/projects/get-project",
+              "api-reference/endpoints/projects/update-project",
+              "api-reference/endpoints/projects/delete-project",
+              "api-reference/endpoints/projects/get-settings",
+              "api-reference/endpoints/projects/update-settings"
+            ]
+          },
+          {
+            "group": "Prices",
+            "pages": [
+              "api-reference/endpoints/prices/create-price",
+              "api-reference/endpoints/prices/list-prices",
+              "api-reference/endpoints/prices/get-price",
+              "api-reference/endpoints/prices/update-price",
+              "api-reference/endpoints/prices/delete-price"
+            ]
+          },
+          {
+            "group": "Subscriptions",
+            "pages": [
+              "api-reference/endpoints/subscriptions/create-enterprise",
+              "api-reference/endpoints/subscriptions/list-by-project",
+              "api-reference/endpoints/subscriptions/get-by-customer",
+              "api-reference/endpoints/subscriptions/get-subscription",
+              "api-reference/endpoints/subscriptions/update-subscription",
+              "api-reference/endpoints/subscriptions/delete-subscription",
+              "api-reference/endpoints/subscriptions/get-seats",
+              "api-reference/endpoints/subscriptions/update-enterprise",
+              "api-reference/endpoints/subscriptions/upgrade",
+              "api-reference/endpoints/subscriptions/downgrade"
+            ]
+          },
+          {
+            "group": "Invoices",
+            "pages": [
+              "api-reference/endpoints/invoices/create-invoice",
+              "api-reference/endpoints/invoices/get-by-customer",
+              "api-reference/endpoints/invoices/get-by-project",
+              "api-reference/endpoints/invoices/get-invoice",
+              "api-reference/endpoints/invoices/delete-invoice",
+              "api-reference/endpoints/invoices/void-invoice"
+            ]
+          },
+          {
+            "group": "Payment methods",
+            "pages": ["api-reference/endpoints/payment-methods/list", "api-reference/endpoints/payment-methods/delete"]
+          },
+          {
+            "group": "Portal",
+            "pages": ["api-reference/endpoints/portal/create-session"]
+          },
+          {
+            "group": "Coupons",
+            "pages": [
+              "api-reference/endpoints/coupons/create",
+              "api-reference/endpoints/coupons/sync",
+              "api-reference/endpoints/coupons/list-by-project",
+              "api-reference/endpoints/coupons/get-coupon",
+              "api-reference/endpoints/coupons/update-coupon",
+              "api-reference/endpoints/coupons/delete-coupon"
+            ]
+          },
+          {
+            "group": "Promotion codes",
+            "pages": [
+              "api-reference/endpoints/promotion-codes/list",
+              "api-reference/endpoints/promotion-codes/create",
+              "api-reference/endpoints/promotion-codes/update",
+              "api-reference/endpoints/promotion-codes/delete"
+            ]
+          },
+          {
+            "group": "Customers",
+            "pages": [
+              "api-reference/endpoints/customers/create-customer",
+              "api-reference/endpoints/customers/list-customers",
+              "api-reference/endpoints/customers/get-customer",
+              "api-reference/endpoints/customers/update-customer",
+              "api-reference/endpoints/customers/delete-customer",
+              "api-reference/endpoints/customers/ban-customer"
+            ]
+          },
+          {
+            "group": "Tokens",
+            "pages": [
+              "api-reference/endpoints/tokens/add",
+              "api-reference/endpoints/tokens/freeze",
+              "api-reference/endpoints/tokens/unfreeze",
+              "api-reference/endpoints/tokens/deduct",
+              "api-reference/endpoints/tokens/get-balance",
+              "api-reference/endpoints/tokens/get-ledgers",
+              "api-reference/endpoints/tokens/get-usage"
+            ]
+          },
+          {
+            "group": "Alerts",
+            "pages": [
+              "api-reference/endpoints/alerts/list-by-project",
+              "api-reference/endpoints/alerts/count",
+              "api-reference/endpoints/alerts/get-alert",
+              "api-reference/endpoints/alerts/mark-read"
             ]
           }
         ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
-    }
-  },
-  "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
-  },
-  "navbar": {
-    "links": [
-      {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
-      }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
-    }
-  },
-  "contextual": {
-    "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
-  },
-  "footer": {
-    "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
-    }
+    ]
   }
 }

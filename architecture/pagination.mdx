@@ -1,0 +1,48 @@
+---
+title: "Pagination"
+description: "Navigate large datasets using offset and cursor-based pagination."
+icon: "list-ol"
+---
+
+# Pagination
+
+List endpoints in the Billy API (like listing customers, invoices, or alerts) can return large amounts of data. To ensure fast response times, these endpoints are paginated.
+
+Billy supports both **Offset-based** and **Cursor-based** pagination on all list endpoints.
+
+## Offset Pagination
+
+Offset pagination is the simplest method. You specify how many records to skip (`offset`) and how many to return (`limit`).
+
+```http
+GET /api/customers?limit=10&offset=20
+```
+
+<Warning>
+**Performance limit:** Offset pagination becomes slower as the `offset` grows very large (e.g., `offset=100000`). For deep pagination or continuous syncing, use cursor pagination instead.
+</Warning>
+
+## Cursor Pagination
+
+Cursor pagination uses a pointer (`cursor`) to a specific item in the dataset. When you make a request, Billy returns a `nextCursor` in the response metadata. You pass this cursor in your next request to fetch the subsequent page.
+
+```http
+// First request
+GET /api/customers?limit=10
+
+// Response includes metadata:
+// "metadata": { "nextCursor": "cus_abc123" }
+
+// Next request
+GET /api/customers?limit=10&cursor=cus_abc123
+```
+
+Cursor pagination guarantees stable results even if new records are inserted while you are paginating, preventing duplicate or skipped records.
+
+## Sorting
+
+You can control the order of returned records using the `orderBy` and `orderByField` parameters.
+
+```http
+GET /api/customers?orderByField=createdAt&orderBy=desc
+```

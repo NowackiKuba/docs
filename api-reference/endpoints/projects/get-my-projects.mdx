@@ -1,0 +1,13 @@
+---
+openapi: "GET /api/projects/me"
+---
+
+Retrieve a paginated list of projects belonging to the authenticated user.
+
+<Note>
+  **Enterprise Context:** Projects are the root isolation boundary (tenant) in Billy. A single user can be a member of multiple projects (e.g., test vs live environments).
+</Note>
+
+### Pagination Details
+This endpoint supports both cursor-based and offset-based pagination. Use the `limit` query parameter to control batch size to prevent query timeouts.
+

@@ -1,0 +1,122 @@
+---
+title: 'Webhooks'
+description: 'Handle Stripe billing events securely through the Billy SDK webhook handler.'
+icon: 'bell'
+---
+
+# Webhooks
+
+Billy processes incoming Stripe webhook events and exposes them as structured alerts. You can either poll the Alerts API or listen to raw events using the SDK webhook handler.
+
+## Setting up the handler
+
+The SDK provides a `createHandler` method that verifies the Stripe signature and routes events to typed callbacks.
+
+<CodeGroup>
+```typescript Next.js App Router
+import { Billy } from '@billy/sdk';
+import { NextRequest } from 'next/server';
+
+const billy = new Billy(process.env.BILLY_API_KEY!);
+
+export async function POST(req: NextRequest) {
+  const body = await req.text();
+  const signature = req.headers.get('stripe-signature')!;
+
+  return billy.webhooks.createHandler(body, signature, {
+    onPaymentFailed: async (invoice) => {
+      // Notify the customer via email
+      await sendPaymentFailureEmail(invoice.customer_email);
+    },
+    onSubscriptionCanceled: async (subscription) => {
+      // Revoke access in your application
+      await revokeAccess(subscription.metadata.userId);
+    },
+    onSubscriptionTrialWillEnd: async (subscription) => {
+      // Send trial-ending reminder
+      await sendTrialEndingEmail(subscription.metadata.userId);
+    },
+  });
+}
+```
+
+```typescript Express
+import { Billy } from '@billy/sdk';
+import express from 'express';
+
+const app = express();
+const billy = new Billy(process.env.BILLY_API_KEY!);
+
+app.post(
+  '/webhooks/stripe',
+  express.raw({ type: 'application/json' }),
+  async (req, res) => {
+    const signature = req.headers['stripe-signature'] as string;
+
+    await billy.webhooks.createHandler(req.body, signature, {
+      onPaymentFailed: async (invoice) => { /* ... */ },
+    });
+
+    res.sendStatus(200);
+  }
+);
+```
+</CodeGroup>
+
+<Warning>
+  Always use `express.raw()` or equivalent raw body parsing middleware for webhook routes. Parsing the body as JSON before signature verification will cause the verification to fail.
+</Warning>
+
+## Signature verification
+
+Billy automatically verifies the `Stripe-Signature` header using your Stripe webhook secret. Set the secret in your environment:
+
+```bash
+STRIPE_WEBHOOK_SECRET=whsec_...
+```
+
+Pass it to the Billy constructor or configure it in your project settings.
+
+## Supported events
+
+Billy maps Stripe events to the following alert types, which you can also filter in the Alerts API.
+
+| Alert type | Trigger |
+|------------|---------|
+| `payment_failed` | A charge attempt fails. |
+| `paid` | An invoice is paid successfully. |
+| `payment_action_required` | 3D Secure or other authentication is required. |
+| `subscription_canceled` | A subscription is canceled. |
+| `subscription_past_due` | A subscription enters past-due state after retries. |
+| `subscription_trial_will_end` | A trial ends within 3 days. |
+| `subscription_paused` | A subscription is paused. |
+| `subscription_renewed` | A subscription successfully renews. |
+| `subscription_upgraded` | A subscription plan is upgraded. |
+| `subscription_downgraded` | A subscription plan is downgraded. |
+| `subscription_reactivated` | A canceled subscription is reactivated. |
+| `charge_dispute_created` | A customer initiates a chargeback. |
+| `low_tokens` | A customer's token balance falls below the configured threshold. |
+| `invoice_upcoming` | An invoice is about to be generated. |
+| `tokens_expired` | Token expiry occurs for a customer. |
+| `checkout_session_expired` | A checkout session expires before completion. |
+| `checkout_session_completed` | A checkout session completes successfully. |
+| `dispute_created` | A dispute is opened on a charge. |
+| `customer_deleted` | A customer is deleted from the project. |
+
+## Using the Alerts API instead
+
+If you prefer polling over a persistent webhook listener, use the Alerts API to retrieve and acknowledge events.
+
+```bash
+# Fetch unread alerts for a project
+curl "https://api.usebilly.dev/api/alerts/project/{projectId}?read=false" \
+  -H "Authorization: API Key <your_api_key>"
+
+# Mark an alert as read
+curl -X PATCH https://api.usebilly.dev/api/alerts/{id} \
+  -H "Authorization: API Key <your_api_key>"
+```
+
+<Note>
+  Alerts are persistent records. Unlike raw Stripe webhooks, they do not expire and can be retrieved at any time for audit purposes.
+</Note>

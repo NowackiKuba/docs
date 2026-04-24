@@ -1,0 +1,60 @@
+---
+title: "Errors & Status Codes"
+description: "Handle Billy API errors programmatically using structured error responses."
+icon: "triangle-exclamation"
+---
+
+# Errors & Status Codes
+
+Billy uses conventional HTTP response codes to indicate the success or failure of an API request. In general:
+- `2xx` codes indicate success.
+- `4xx` codes indicate an error that failed given the information provided (e.g., a required parameter was omitted, or a resource was not found).
+- `5xx` codes indicate an error with Billy's servers (these are rare).
+
+## Error Schema
+
+When an API request fails, Billy returns a structured JSON object containing an `error` envelope. This allows your application to programmatically react to specific failure scenarios.
+
+```json
+{
+  "error": {
+    "statusCode": 400,
+    "message": "The provided Stripe customer ID already exists in this project.",
+    "error": "Bad Request",
+    "code": "CUSTOMER_ALREADY_EXISTS",
+    "timestamp": "2026-04-24T12:00:00.000Z",
+    "path": "/api/customers"
+  }
+}
+```
+
+## Error Codes
+
+The `code` property provides a stable, programmatic string that you can use in `switch` statements. 
+
+| Code | HTTP Status | Description |
+|---|---|---|
+| `VALIDATION_ERROR` | 400 | The request payload failed Zod schema validation. |
+| `UNAUTHORIZED` | 401 | Missing or invalid API key. |
+| `FORBIDDEN` | 403 | The API key lacks permission to perform this action. |
+| `NOT_FOUND` | 404 | The requested resource (e.g., Customer, Subscription) does not exist or was soft-deleted. |
+| `CONFLICT` | 409 | A unique constraint was violated. |
+| `STRIPE_ERROR` | 422 | The underlying request to Stripe failed (e.g., card declined). |
+| `RATE_LIMITED` | 429 | You have exceeded your API rate limit. |
+
+## SDK Error Handling
+
+If you are using the `@billy/sdk`, non-`2xx` responses are thrown as `BillyError` instances. You can catch these and inspect their properties safely.
+
+```typescript
+import { BillyError } from '@billy/sdk';
+
+try {
+  await billy.customers.create({ ... });
+} catch (error) {
+  if (error instanceof BillyError) {
+    console.error(error.code); // 'CUSTOMER_ALREADY_EXISTS'
+    console.error(error.statusCode); // 400
+  }
+}
+```

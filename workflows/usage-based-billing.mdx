@@ -1,0 +1,28 @@
+---
+title: "Usage-based Billing"
+description: "Implementing prepaid vs. postpaid metered billing."
+icon: "chart-line"
+---
+
+# Usage-based Billing
+
+Billy supports two primary models for usage-based billing: **Prepaid Token Ledgers** and **Postpaid Metered Billing**.
+
+## Prepaid Token Ledgers (Credits)
+
+This is the most common model for AI companies (e.g., OpenAI). Customers purchase or are granted a bucket of tokens, which are deducted as they consume resources.
+
+**Workflow:**
+1. Customer subscribes to the "Pro Plan", which grants 100,000 tokens per month.
+2. Billy automatically deposits 100,000 tokens to the ledger every time the subscription renews.
+3. Your application deducts tokens via `POST /api/tokens/deduct` as the user generates AI responses.
+4. When the balance hits 0, you restrict access or prompt them to buy a "Top-up" (a one-time Price that adds more tokens).
+
+## Postpaid Metered Billing (Stripe)
+
+In a postpaid model (like AWS), the customer consumes resources for free throughout the month, and is charged for the exact amount at the end of the billing cycle.
+
+**Workflow:**
+1. Create a Price with `billingType: usage_based` and `usageType: metered`.
+2. As the customer uses resources, report the usage to Billy (coming soon to the API) or directly to Stripe's Metering API.
+3. At the end of the month, Stripe calculates the total and generates an invoice automatically.

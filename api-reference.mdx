@@ -1,0 +1,92 @@
+---
+title: 'API Reference'
+description: 'Full REST API reference for the Billy platform — projects, subscriptions, billing, customers, tokens, and alerts.'
+---
+
+# API Reference
+
+The Billy REST API follows OpenAPI 3.0 conventions. All endpoints are authenticated with an API key and return JSON.
+
+## Base URL
+
+```
+https://api.usebilly.dev
+```
+
+## Authentication
+
+Include your API key in the `Authorization` header:
+
+```http
+Authorization: API Key <your_api_key>
+```
+
+## Response format
+
+### Success
+
+All successful responses are wrapped in a `data` envelope:
+
+```json
+{
+  "data": { ... }
+}
+```
+
+### Errors
+
+Errors return a structured `error` object:
+
+```json
+{
+  "error": {
+    "statusCode": 404,
+    "message": "Customer not found",
+    "error": "Not Found",
+    "code": "CUSTOMER_NOT_FOUND",
+    "timestamp": "2026-04-24T10:00:00.000Z",
+    "path": "/api/customers/cus_invalid"
+  }
+}
+```
+
+## Pagination
+
+List endpoints support offset-based and cursor-based pagination via query parameters:
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `limit` | integer | Number of records per page. Must be greater than 0. |
+| `offset` | integer | Number of records to skip. |
+| `cursor` | string | Cursor value for cursor-based pagination. |
+| `orderBy` | `asc` \| `desc` | Sort direction. |
+| `orderByField` | string | Field to sort by (e.g., `createdAt`). |
+
+## API sections
+
+<CardGroup cols={2}>
+  <Card title="Projects" icon="folder" href="/api-reference">
+    Manage projects, retrieve settings, and configure billing behavior.
+  </Card>
+  <Card title="Prices" icon="tag" href="/api-reference">
+    Create and manage pricing plans attached to Stripe products.
+  </Card>
+  <Card title="Subscriptions" icon="repeat" href="/api-reference">
+    Create, upgrade, downgrade, and cancel customer subscriptions.
+  </Card>
+  <Card title="Customers" icon="users" href="/api-reference">
+    Register customers, update profiles, and manage bans.
+  </Card>
+  <Card title="Billing" icon="file-invoice-dollar" href="/api-reference">
+    Manage invoices, coupons, promotion codes, and payment methods.
+  </Card>
+  <Card title="Tokens" icon="coins" href="/api-reference">
+    Add, deduct, freeze, and query token balances and ledgers.
+  </Card>
+  <Card title="Portal" icon="browser" href="/api-reference">
+    Generate magic links to the hosted customer billing portal.
+  </Card>
+  <Card title="Alerts" icon="bell" href="/api-reference">
+    Retrieve and acknowledge billing event alerts.
+  </Card>
+</CardGroup>

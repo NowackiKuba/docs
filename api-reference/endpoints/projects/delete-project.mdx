@@ -1,0 +1,10 @@
+---
+openapi: "DELETE /api/projects/{id}"
+---
+
+Permanently remove a project and its associated metadata.
+
+<Warning>
+  **Destructive Action:** This is a hard-delete for the project entity. However, underlying Stripe data (Customers, Subscriptions) remains untouched on the Stripe side. We strongly recommend archiving instead.
+</Warning>
+

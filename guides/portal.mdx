@@ -1,0 +1,72 @@
+---
+title: 'Customer portal'
+description: 'Let customers manage their own billing through a hosted portal with a one-call magic link.'
+icon: 'browser'
+---
+
+# Customer portal
+
+Billy's customer portal is a hosted page powered by Stripe Billing. With a single API call, you generate a short-lived magic link and redirect your customer there — no front-end billing UI required.
+
+## Creating a portal session
+
+```bash
+curl -X POST https://api.usebilly.dev/api/portal/sessions \
+  -H "Authorization: API Key <your_api_key>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "customerId": "cus_abc123",
+    "returnUrl": "https://yourapp.com/billing"
+  }'
+```
+
+The response contains a `url` field. Redirect the customer to that URL immediately — portal sessions expire after a short period.
+
+```typescript
+const session = await billy.portal.createSession({
+  customerId: req.user.billingCustomerId,
+  returnUrl: `${process.env.APP_URL}/billing`,
+});
+
+// In a Next.js API route or server action:
+redirect(session.data.url);
+```
+
+## What customers can do in the portal
+
+The portal capabilities depend on your Stripe portal configuration, but typically include:
+
+- Update payment methods
+- Download invoices and receipts
+- Cancel or resume a subscription
+- Update billing address and tax information
+
+<Note>
+  Configure which actions are available to customers in the Stripe Dashboard under **Billing → Customer portal → Settings**. Billy passes control of the portal experience directly to Stripe.
+</Note>
+
+## Customizing the portal appearance
+
+Set your brand color and logo in project settings. Billy passes these values to Stripe so the portal matches your product's visual identity.
+
+```bash
+curl -X PATCH https://api.usebilly.dev/api/projects/{id}/settings \
+  -H "Authorization: API Key <your_api_key>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "brandColor": "#4F46E5",
+    "logoUrl": "https://yourapp.com/logo.png",
+    "upgradeProration": "create_prorations",
+    "downgradeProration": "none",
+    "upgradeTokenBehavior": "carry_over",
+    "downgradeTokenBehavior": "reset"
+  }'
+```
+
+## Security
+
+Portal session URLs are single-use, time-limited tokens. Do not cache or log them. Generate a fresh session for every customer redirect.
+
+<Warning>
+  Portal sessions provide full billing management access for the customer. Only generate sessions for authenticated users who have verified ownership of the account.
+</Warning>

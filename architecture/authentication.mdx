@@ -1,0 +1,42 @@
+---
+title: "Authentication"
+description: "Learn how to securely authenticate with the Billy API using Project API Keys."
+icon: "key"
+---
+
+# Authentication
+
+All API requests to Billy require authentication. Billy uses project-scoped API Keys to authenticate requests. 
+
+## API Keys
+
+Every project in Billy generates an API key. You must include this key in the `Authorization` header of every HTTP request.
+
+<CodeGroup>
+```http HTTP
+Authorization: API Key bly_live_xxxxxxxxxxxxx
+```
+
+```typescript TypeScript SDK
+import { Billy } from '@billy/sdk';
+
+const billy = new Billy('bly_live_xxxxxxxxxxxxx');
+```
+</CodeGroup>
+
+<Warning>
+**Keep your keys secret**
+Your API keys carry full privileges for your project workspace. Never expose them in client-side code (e.g., React, Vue, or standard browser scripts). All Billy API calls must be made from your secure backend server.
+</Warning>
+
+## Project Scoping
+
+API keys in Billy are strictly scoped to a single **Project**. 
+A single user account can manage multiple projects (for example, one for Test Mode and one for Live Mode). When you authenticate a request, Billy infers the target project directly from the API key. You cannot access resources from Project A using an API key from Project B.
+
+## Key Rotation
+
+If an API key is compromised, you can roll it immediately from the Billy dashboard:
+1. Navigate to **Project Settings > Developers > API Keys**.
+2. Click **Roll Key**.
+3. A new key is instantly generated, and the old key is immediately invalidated. Any active requests using the old key will begin returning `401 Unauthorized`.

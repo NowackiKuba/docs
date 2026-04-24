@@ -1,0 +1,80 @@
+---
+title: "Project Object"
+description: "The Project object represents a workspace or tenant within Billy, encapsulating all billing logic, webhooks, and integrations."
+icon: "folder"
+---
+
+# Project Object
+
+The Project is the root object for tenant isolation. Every Customer, Subscription, and API key belongs to a specific Project. 
+
+<ResponseField name="id" type="string" required>
+  The unique identifier for the project.
+</ResponseField>
+
+<ResponseField name="name" type="string" required>
+  The human-readable name of the project.
+</ResponseField>
+
+<ResponseField name="mode" type="string" required>
+  Indicates the Stripe environment the project is connected to.
+  <Expandable title="Allowed values">
+    - `test`: Connected to Stripe test mode. Does not process real money.
+    - `live`: Connected to Stripe live mode. Processes actual payments.
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="status" type="string" required>
+  The operational status of the project.
+  <Expandable title="Allowed values">
+    - `active`: Fully operational.
+    - `suspended`: Banned or restricted from creating new subscriptions.
+    - `archived`: Soft-deleted.
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="settings" type="object">
+  Deep configuration object controlling global billing behaviors for the project.
+  
+  <Expandable title="Settings properties">
+    <ResponseField name="defaultCurrency" type="string">
+      The default ISO currency code for new customers and manual invoices (e.g., `usd`).
+    </ResponseField>
+    <ResponseField name="trialDays" type="integer">
+      Default number of trial days applied to new subscriptions.
+    </ResponseField>
+    <ResponseField name="dunningEnabled" type="boolean">
+      Whether Billy should automatically handle failed payment retries.
+    </ResponseField>
+    <ResponseField name="cancelAtPeriodEnd" type="boolean">
+      If true, cancellations default to the end of the billing cycle instead of immediately.
+    </ResponseField>
+    <ResponseField name="upgradeProration" type="string">
+      Default behavior for mid-cycle upgrades (`create_prorations`, `none`, `always_invoice`).
+    </ResponseField>
+    <ResponseField name="downgradeProration" type="string">
+      Default behavior for mid-cycle downgrades (`create_prorations`, `none`, `always_invoice`).
+    </ResponseField>
+    <ResponseField name="brandColor" type="string">
+      Hex color code used to style the Stripe Customer Portal.
+    </ResponseField>
+    <ResponseField name="logoUrl" type="string">
+      URL to the brand logo used in the Stripe Customer Portal.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="createdAt" type="string (ISO 8601)">
+  Timestamp when the project was created.
+</ResponseField>
+
+<ResponseField name="updatedAt" type="string (ISO 8601)">
+  Timestamp when the project was last updated.
+</ResponseField>
+
+## Multi-environment mapping
+In typical SaaS architectures, you create two Billy projects:
+1. **Acme Corp (Test)** mapping to your Stripe Test mode keys.
+2. **Acme Corp (Production)** mapping to your Stripe Live mode keys.
+
+You use the API keys for these respective projects in your staging and production environments.

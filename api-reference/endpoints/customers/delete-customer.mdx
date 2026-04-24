@@ -1,0 +1,10 @@
+---
+openapi: "DELETE /api/customers/{id}"
+---
+
+Soft-delete a customer.
+
+<Warning>
+  To maintain financial integrity, deleting a customer will immediately cancel active subscriptions but retains the immutable ledger and invoice history.
+</Warning>
+

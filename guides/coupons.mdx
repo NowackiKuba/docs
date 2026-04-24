@@ -1,0 +1,93 @@
+---
+title: 'Coupons and promotion codes'
+description: 'Create discount coupons, generate promotion codes, and sync existing Stripe coupons into Billy.'
+icon: 'tag'
+---
+
+# Coupons and promotion codes
+
+Coupons define a discount rule (percentage off, or fixed amount off). Promotion codes are human-readable codes that customers enter at checkout to apply a coupon.
+
+## Creating a coupon
+
+```bash
+curl -X POST https://api.usebilly.dev/api/billing/coupons \
+  -H "Authorization: API Key <your_api_key>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "projectId": "proj_abc123",
+    "name": "LAUNCH20",
+    "percentOff": 20,
+    "duration": "once",
+    "maxRedemptions": 500
+  }'
+```
+
+### Coupon duration options
+
+| Value | Behavior |
+|-------|----------|
+| `once` | Discount applies to the first invoice only. |
+| `repeating` | Discount applies for `durationInMonths` months. |
+| `forever` | Discount applies to all future invoices. |
+
+## Syncing an existing Stripe coupon
+
+If you already have coupons in Stripe, import them without recreating them.
+
+```bash
+curl -X POST https://api.usebilly.dev/api/billing/coupons/sync \
+  -H "Authorization: API Key <your_api_key>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "projectId": "proj_abc123",
+    "stripeCouponId": "STRIPE_COUPON_ID"
+  }'
+```
+
+## Creating promotion codes
+
+Once you have a coupon, generate promotion codes that customers can enter.
+
+```bash
+curl -X POST https://api.usebilly.dev/api/billing/promotion-codes \
+  -H "Authorization: API Key <your_api_key>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "couponId": "cpn_abc123",
+    "code": "EARLYBIRD",
+    "maxRedemptions": 100,
+    "expiresAt": "2026-12-31T23:59:59Z"
+  }'
+```
+
+<Tip>
+  Leave `code` empty to have Stripe generate a random code automatically.
+</Tip>
+
+## Listing promotion codes for a coupon
+
+```bash
+curl "https://api.usebilly.dev/api/billing/coupons/{couponId}/promotion-codes" \
+  -H "Authorization: API Key <your_api_key>"
+```
+
+## Updating and deactivating
+
+Mutable fields on a coupon include `maxRedemptions`, `valid`, and `status`. Promotion codes can have their `active` state, `expiresAt`, `maxRedemptions`, and `metadata` updated.
+
+```bash
+# Deactivate a promotion code
+curl -X PATCH https://api.usebilly.dev/api/billing/promotion-codes/{id} \
+  -H "Authorization: API Key <your_api_key>" \
+  -H "Content-Type: application/json" \
+  -d '{ "active": false }'
+```
+
+## Deleting coupons
+
+Deleting a coupon soft-deletes it. Any active subscriptions or invoices using that coupon retain their discount; no new redemptions are accepted.
+
+<Warning>
+  Deleting a coupon does not retroactively remove discounts from existing subscriptions or invoices.
+</Warning>

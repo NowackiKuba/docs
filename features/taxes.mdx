@@ -1,0 +1,31 @@
+---
+title: "Tax Integration"
+description: "Automated global tax calculation and collection."
+icon: "receipt"
+---
+
+# Tax Integration
+
+Selling software globally requires navigating complex tax regulations (VAT, GST, Sales Tax). Billy integrates directly with **Stripe Tax** to automate calculation and collection.
+
+## Enabling Tax Calculation
+
+You can enable automatic tax calculation globally for a project via the Project Settings endpoint:
+
+```bash
+curl -X PATCH https://api.usebilly.dev/api/projects/{id}/settings   -H "Authorization: API Key <your_api_key>"   -H "Content-Type: application/json"   -d '{
+    "taxEnabled": true
+  }'
+```
+
+## How it works
+
+1. **Address Collection:** When tax is enabled, Billy enforces that a Customer must have a valid billing address (or IP address resolution) before a subscription or manual invoice can be finalized.
+2. **Tax Behavior:** Prices in Billy have a `taxBehavior` attribute (`inclusive` or `exclusive`). 
+   - *Exclusive*: A $10 price + 20% VAT = The customer pays $12.
+   - *Inclusive*: A $10 price + 20% VAT = The customer pays $10, and $1.67 is remitted as tax.
+3. **Invoice Generation:** When Stripe generates the invoice, it automatically applies the correct localized tax rate based on the customer's jurisdiction.
+
+<Warning>
+To use Billy's automated tax features, you must first register your active tax jurisdictions in the Stripe Dashboard under **Settings > Taxes**.
+</Warning>

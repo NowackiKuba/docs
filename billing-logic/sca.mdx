@@ -1,0 +1,35 @@
+---
+title: "Strong Customer Authentication (SCA)"
+description: "Handling 3D Secure and European PSD2 regulations."
+icon: "shield-check"
+---
+
+# Strong Customer Authentication (SCA)
+
+If your business operates in Europe or serves European customers, you must comply with **Strong Customer Authentication (SCA)** under the PSD2 regulation. This requires customers to physically authenticate payments (e.g., using a banking app or SMS code) through a process like **3D Secure**.
+
+## How Billy Handles SCA
+
+When an invoice requires SCA, the payment attempt will fail with an `authentication_required` status. 
+
+Billy automatically traps this state:
+1. The invoice status remains `open`.
+2. The subscription status transitions to `incomplete` (for initial payments) or `past_due` (for recurring payments).
+3. Billy generates a `payment_action_required` alert.
+
+## Resolving SCA in Your App
+
+When you detect an `incomplete` or `past_due` subscription, or receive a `payment_action_required` alert, you must direct the customer to complete the authentication.
+
+The easiest way to resolve this is by redirecting the customer to the **Billy Customer Portal** or directly to the **Stripe Hosted Invoice URL**.
+
+```typescript
+const invoice = await billy.invoices.get(invoiceId);
+
+if (invoice.status === 'open' && requiresAction) {
+  // Redirect to Stripe's hosted invoice page where the user can complete 3D Secure
+  return redirect(invoice.hostedInvoiceUrl);
+}
+```
+
+Once the customer completes the 3D Secure challenge on the hosted page, the payment succeeds, and Billy automatically transitions the subscription back to `active`.

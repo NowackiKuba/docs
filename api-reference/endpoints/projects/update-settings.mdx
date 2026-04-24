@@ -1,0 +1,10 @@
+---
+openapi: "PATCH /api/projects/{id}/settings"
+---
+
+Update the project's global billing settings.
+
+<Note>
+  **Proration Logic:** Changing `upgradeProration` or `downgradeProration` applies immediately to all future subscription mutations, but does not retroactively alter existing unfinalized invoices.
+</Note>
+

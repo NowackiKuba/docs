@@ -1,0 +1,10 @@
+---
+openapi: "GET /api/projects/{id}"
+---
+
+Retrieve detailed information for a specific project by its ID.
+
+<Warning>
+  **Authorization Check:** Ensure that the API key provided belongs to the environment (live/test) that matches the project ID, or access will be denied with a `401 Unauthorized`.
+</Warning>
+

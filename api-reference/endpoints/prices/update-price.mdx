@@ -1,0 +1,10 @@
+---
+openapi: "PATCH /api/prices/{id}"
+---
+
+Update price metadata or status.
+
+<Warning>
+  **Immutability:** Pricing amounts and intervals are immutable. To change a price's cost, you must create a new Price entity and update existing subscriptions to point to it.
+</Warning>
+

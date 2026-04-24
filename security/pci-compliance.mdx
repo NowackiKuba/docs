@@ -1,0 +1,25 @@
+---
+title: "PCI Compliance"
+description: "Understanding your PCI DSS scope when using Billy."
+icon: "credit-card"
+---
+
+# PCI Compliance
+
+The Payment Card Industry Data Security Standard (PCI DSS) applies to any business that accepts credit card payments.
+
+## Billy's Role in PCI
+
+**Billy never touches, transmits, or stores raw credit card numbers.** 
+
+Because Billy sits as an abstraction layer above Stripe, all sensitive payment information flows directly from your user's browser (via Stripe Elements or Stripe Checkout) directly to Stripe's PCI Level 1 certified vaults.
+
+Billy only stores references to payment methods (e.g., `pm_12345`) and card metadata (brand, last 4 digits, expiry month/year).
+
+## Your Scope
+
+By using Billy in conjunction with Stripe Checkout or Stripe Elements, your application qualifies for the simplest level of PCI compliance (SAQ A). 
+
+<Warning>
+**Never log card details:** If you build custom forms, ensure you use Stripe Elements. If your backend server ever receives a raw PAN (Primary Account Number), your PCI compliance scope instantly expands to the most rigorous and expensive level (SAQ D).
+</Warning>

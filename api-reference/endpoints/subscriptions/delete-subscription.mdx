@@ -1,0 +1,10 @@
+---
+openapi: "DELETE /api/subscriptions/{id}"
+---
+
+Cancel a subscription.
+
+<Warning>
+  **Data Integrity:** This strictly performs a soft-delete (cancellation). The subscription record remains accessible for MRR reporting and historical audits.
+</Warning>
+

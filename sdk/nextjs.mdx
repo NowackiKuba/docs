@@ -1,0 +1,70 @@
+---
+title: "Next.js Integration"
+description: "Best practices for using Billy with Next.js App Router."
+icon: "cube"
+---
+
+# Next.js Integration
+
+Billy is designed to work seamlessly with Next.js App Router, Server Actions, and Route Handlers.
+
+## Global SDK Instance
+
+Avoid initializing the Billy SDK multiple times during development (which can cause memory leaks in `next dev`). Create a global singleton instance:
+
+```typescript lib/billy.ts
+import { Billy } from '@billy/sdk';
+
+const globalForBilly = global as unknown as { billy: Billy };
+
+export const billy =
+  globalForBilly.billy || new Billy(process.env.BILLY_API_KEY!);
+
+if (process.env.NODE_ENV !== 'production') globalForBilly.billy = billy;
+```
+
+## Server Actions
+
+Use Billy directly inside Next.js Server Actions to handle forms (like upgrading a subscription) without creating an API route.
+
+```typescript app/actions.ts
+'use server'
+
+import { billy } from '@/lib/billy';
+import { redirect } from 'next/navigation';
+
+export async function upgradePlan(formData: FormData) {
+  const customerId = formData.get('customerId') as string;
+  const newPriceId = formData.get('priceId') as string;
+
+  // 1. Fetch active subscription
+  const sub = await billy.subscriptions.getByCustomer(customerId);
+
+  // 2. Perform upgrade with proration
+  await billy.subscriptions.upgrade(sub.id, {
+    newPriceId
+  });
+
+  redirect('/dashboard/billing?success=true');
+}
+```
+
+## Webhooks in Route Handlers
+
+Billy's webhook handler integrates directly with Next.js Route Handlers.
+
+```typescript app/api/webhooks/billy/route.ts
+import { billy } from '@/lib/billy';
+import { NextRequest } from 'next/server';
+
+export async function POST(req: NextRequest) {
+  const body = await req.text();
+  const signature = req.headers.get('stripe-signature')!;
+
+  return billy.webhooks.createHandler(body, signature, {
+    onPaymentFailed: async (invoice) => {
+      // Process failure
+    }
+  });
+}
+```

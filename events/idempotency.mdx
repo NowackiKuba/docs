@@ -1,0 +1,34 @@
+---
+title: "Webhook Idempotency"
+description: "Ensuring safe processing of duplicated webhook events."
+icon: "arrows-spin"
+---
+
+# Webhook Idempotency
+
+Stripe (and by extension, Billy) guarantees "at least once" delivery of webhook events. This means that in rare network conditions, your application might receive the exact same webhook payload multiple times.
+
+## Why Idempotency Matters
+
+If you deduct 500 tokens from a user's ledger every time an invoice is paid, receiving the `invoice.paid` event twice would result in a double-deduction of 1,000 tokens. Your handlers must be **idempotent**—meaning the result of processing the event once is exactly the same as processing it multiple times.
+
+## Handling Idempotency in Billy
+
+The `@billy/sdk` does not enforce idempotency on your behalf for custom logic. You must implement this in your database.
+
+**Best Practice Workflow:**
+1. When a webhook arrives, extract the `stripeEventId` (e.g., `evt_123`).
+2. Attempt to insert this ID into a dedicated `processed_events` database table with a `UNIQUE` constraint.
+3. If the insert succeeds, process the event.
+4. If the insert fails (Constraint Violation), immediately return `200 OK` — you have already processed this event.
+
+```typescript
+export const POST = billy.webhooks.createHandler({
+  onPaymentFailed: async (invoice, eventId) => {
+    const isNew = await db.insertProcessedEvent(eventId);
+    if (!isNew) return; // Idempotency check failed, safely ignore
+    
+    await sendPaymentFailureEmail(invoice.customer_email);
+  }
+});
+```
